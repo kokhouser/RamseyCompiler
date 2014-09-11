@@ -1,0 +1,18 @@
+#Ramsey example program to calculate factorial.
+
+#Recursive function that returns factorial of an integer.
+fun factorial(in x) as in
+
+	if (x = 1)
+		toss x
+	else
+		toss (x * factorial (x-1))
+	endif
+
+endfun
+
+in x
+give "Enter number to be factorialized."
+take x
+in y <- factorial(x)
+give x " factorialized is " y
