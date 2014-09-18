@@ -1,0 +1,11 @@
+<program> -> <top_lvl_stmt>
+<top_lvl_stmt> -> <top_lvl_stmt> <endl> <top_lvl_stmt>
+				| <stmts>
+				| <reserved> <identifier> (<params>) <reserved> <type>
+<params>	   -> <param>, <params>
+			   -> <param>
+<param>		   -> <type> <identifier>
+<stmts>		   -> <stmt> <endl> <stmts>
+			    | <stmt>
+<stmt> 		   -> <assignment>
+			   -> 
