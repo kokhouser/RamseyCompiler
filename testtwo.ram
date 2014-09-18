@@ -1,0 +1,47 @@
+fun Foo(in bar) as boo 		#nice use of overused unofficial standards
+	
+							#do some maths for fun!
+bar <- bar+242				
+bar <- bar*2
+bar <- bar-40
+bar <- bar/2 				#bar will be the same evenness as before 
+
+
+
+	if(bar mod 2 = 0)		#check to see if number is even
+		toss 1				#number is even
+	endif
+	
+	toss 0					#number is odd (even though 0 is not odd)
+
+endfun
+
+
+give "Let me check 5 numbers for evenness!"
+in count <-0
+in arr[5]					#does fixed size mean a constant is required?
+bool arb[5]
+while(count < 5)
+	give "enter an integer"
+	take arr[count]
+	arb[count] <- foo(arr[count]) 
+endwhile
+
+count <-0
+while(count < 5)
+	
+							#potential edit start
+	give "number " 
+	give count
+	give " is "
+							#potential edit end
+	
+	if(arb[count])
+		give "even"
+	else
+		give "odd"
+	endif				
+							#question: newline at end of give? if so, remove potential edit section
+							#if not, this should work but needs newline characters.
+
+end while
