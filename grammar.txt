@@ -1,11 +1,62 @@
-<program> -> <top_lvl_stmt>
-<top_lvl_stmt> -> <top_lvl_stmt> <endl> <top_lvl_stmt>
+### Grammar for the programming language Ramsey.
+## Add all productions in their respective terminals, put undecided productions and terminals beyond the line.
+
+<program> 	   	-> <top_lvl_stmt>
+<top_lvl_stmt> 	-> <top_lvl_stmt> <endl> <top_lvl_stmt>
 				| <stmts>
-				| <reserved> <identifier> (<params>) <reserved> <type>
-<params>	   -> <param>, <params>
-			   -> <param>
-<param>		   -> <type> <identifier>
-<stmts>		   -> <stmt> <endl> <stmts>
+				| fun <ident> (<params>) as <type> \n <stmts> endfun
+<params>	   	-> <param>, <params>
+			   	-> <param>
+			   	-> ε
+<param>		   	-> <type> <ident>
+<stmts>		   	-> <stmt> \n <stmts>
 			    | <stmt>
-<stmt> 		   -> <assignment>
-			   -> 
+<stmt>		   	-> <conditional>
+				| <assignment>
+				| ε
+<assignment>	-> ident <- <expression>
+				| type ident <- <expression>
+<conditional>  	-> if (<expression>) \n <stmts> <elfears> endif
+			    | while (<expression>) \n <stmts> endwhile
+<elfears>	   	-> elf <stmts>
+			    | elf <stmts> <elfears>
+			    | else <stmts>
+			    | ε
+<expression>   	-> <ident>
+				| <type> <ident>
+				| <literal>
+				| <ident> <operator> <ident>
+				| <ident> <op> <literal>
+				| <literal> <op> <ident>
+				| <literal> <op> <literal>
+				| <literal> <cop> <ident>
+				| NOT (<expression>)
+<cop>			-> AND
+				-> OR
+<operators>		-> +
+				|  -
+				|  *
+				|  /
+				|  %
+				|  <
+				|  >
+				|  <=
+				|  >=
+				|  =
+				|  !=
+
+<literals>		-> "<c>*"
+				|  <digit*>
+				|  <digit>*.<digit>*
+				|  true
+				|  false
+<ident>			-> <letter>
+#################### PUT UNSURE PRODUCTIONS AND TERMINALS BEYOND HERE ########################################
+
+
+
+
+
+#################### PUT LOGICAL FLAWS WITH RAMSEY BEYOND HERE ########################################
+## PROBLEM #1 ##
+
