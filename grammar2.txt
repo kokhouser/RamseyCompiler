@@ -1,0 +1,70 @@
+### Grammar for the programming language Ramsey.
+## Add all productions in their respective terminals, put undecided productions and terminals beyond the line.
+
+<program> 	   	-> <top_lvl_stmt>
+<top_lvl_stmt> 	-> <top_lvl_stmt> <endl> <top_lvl_stmt>
+				| <stmts>
+				| fun <ident> (<params>) as <type> \n <stmts> endfun
+<params>	   	-> <param>, <params>
+			   	-> <param>
+			   	-> ε
+<param>		   	-> <type> <ident>
+<stmts>		   	-> <stmt> \n <stmts>
+			    | <stmt>
+<stmt>		   	-> <conditional>
+				| <assignment>
+				| ε
+				| <expression>
+<assignment>	-> ident <- <expression>
+				| type ident <- <expression>
+				| type ident[<digit><digit>*]<- <expression>
+<conditional>  	-> if (<expression>) \n <stmts> <elfears> endif
+			    | while (<expression>) \n <stmts> endwhile
+<elfears>	   	-> elf( <expression> ) <stmts>
+			    | elf( <expression> ) <stmts> <elfears>
+			    | else <stmts>
+			    | ε
+<expression>   	-> <ident>
+				| <ident> [<digit><digit>*]
+				| <type> <ident>
+				| <type> <ident> [<digit><digit>*]
+				| <literal>
+				| <ident> <operator> <ident>
+				| <ident> <op> <literal>
+				| <literal> <op> <ident>
+				| <literal> <op> <literal>
+				| <literal> <cop> <ident>
+				| NOT (<expression>)
+				| <ident> ( <params> )
+<val>		-> 
+<cop>			-> AND
+				-> OR
+<op>			-> +
+				|  -
+				|  *
+				|  /
+				|  %
+				|  <
+				|  >
+				|  <=
+				|  >=
+				|  =
+				|  !=
+
+<literals>		-> "<letter><letter>*"
+				|  <digit><digit>*
+				|  <digit>*.<digit><digit>*
+				|  true
+				|  false
+<ident>			-> <letter><letter|digit|underscore>*
+<type>			-> in
+				|  boo
+#################### PUT UNSURE PRODUCTIONS AND TERMINALS BEYOND HERE ########################################
+
+
+
+
+
+#################### PUT LOGICAL FLAWS WITH RAMSEY BEYOND HERE ########################################
+## PROBLEM #1 ##
+
