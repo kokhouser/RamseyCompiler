@@ -15,6 +15,9 @@
 				| <assignment>
 				| ε
 				| <expression>
+				| <declaration>
+<declaration>		-> <type> <ident>
+				| <type> <ident> [<digit><digit>*]
 <assignment>	-> ident <- <expression>
 				| type ident <- <expression>
 				| type ident[<digit><digit>*]<- <expression>
@@ -26,19 +29,12 @@
 			    | ε
 <expression>   	-> <ident>
 				| <ident> [<digit><digit>*]
-				| <type> <ident>
-				| <type> <ident> [<digit><digit>*]
 				| <literal>
-				| <ident> <operator> <ident>
-				| <ident> <op> <literal>
-				| <literal> <op> <ident>
-				| <literal> <op> <literal>
-				| <literal> <cop> <ident>
 				| NOT (<expression>)
-				| <ident> ( <params> )
+				| <ident>( <params> )
+				| <expression> <op> <expression>
+				| (expression)
 <val>		-> 
-<cop>			-> AND
-				-> OR
 <op>			-> +
 				|  -
 				|  *
@@ -50,6 +46,8 @@
 				|  >=
 				|  =
 				|  !=
+				| AND
+				| OR
 
 <literals>		-> "<letter><letter>*"
 				|  <digit><digit>*
