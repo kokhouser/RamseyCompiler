@@ -23,7 +23,9 @@
 			    | else <stmts>
 			    | ε
 <expression>   	-> <ident>
+				| <ident> [<digits>*]
 				| <type> <ident>
+				| <type> <ident> [<digits>*]
 				| <literal>
 				| <ident> <operator> <ident>
 				| <ident> <op> <literal>
@@ -33,7 +35,7 @@
 				| NOT (<expression>)
 <cop>			-> AND
 				-> OR
-<operators>		-> +
+<op>			-> +
 				|  -
 				|  *
 				|  /
@@ -50,7 +52,7 @@
 				|  <digit>*.<digit>*
 				|  true
 				|  false
-<ident>			-> <letter>
+<ident>			-> <letter><letter|digit|underscore>*
 #################### PUT UNSURE PRODUCTIONS AND TERMINALS BEYOND HERE ########################################
 
 
