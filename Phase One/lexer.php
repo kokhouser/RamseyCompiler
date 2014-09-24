@@ -15,6 +15,7 @@
 		return $launch;
 	}
 
+	$tokens = array("ident", "in_type", "boo_type", "operator", "reserved", "left_paren", "right_paren");
 	$filename = $argv[1];
 	$input = file_get_contents($filename);
 	$lines = explode("\n", $input);
@@ -22,7 +23,13 @@
 	$count = 0;
 	foreach($lines as $line){
 		$pretoken = explode(" ",$line);
-		echo trim($pretoken[0]);
+		foreach ($pretoken as $word){
+			$no_space = trim($word);
+			if (substr($no_space,0,1) == '#'){
+				break;
+			}
+			echo "$no_space \n";
+		}
 	}
 
 ?>
