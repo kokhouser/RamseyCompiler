@@ -49,7 +49,7 @@
 				| AND
 				| OR
 
-<literals>		-> "<letter><letter>*"
+<literals>		-> "((?!").)*"
 				|  <digit><digit>*
 				|  <digit>*.<digit><digit>*
 				|  true

@@ -25,11 +25,25 @@
 		$pretoken = explode(" ",$line);
 		foreach ($pretoken as $word){
 			$no_space = trim($word);
-			if (substr($no_space,0,1) == '#'){
+			$count = strlen($no_space);
+			$start=0;
+			$length=1;
+			$isDone=false;
+			for($i=0;$i<$count;$i++){
+				switch (substr($no_space,$start,$length)){
+				case "#":
+					$isDone=true;
+					break;			
+			}
+
+			if($isDone)
 				break;
 			}
-			echo "$no_space \n";
+		if($isDone)
+			break;
+		echo "$word ";
 		}
+		echo "\n";
 	}
 
 ?>
