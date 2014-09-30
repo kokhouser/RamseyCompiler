@@ -1,20 +1,19 @@
 
 
 
+<fun><ident><l_paren><in_type><ident><r_paren><as><in_type>
 
-<ident>f<ident>f<ident>x<ident>a<ident>i
+<if><l_paren><ident><compare_op><literal><r_paren>
+<toss><ident>
+<ident>
+<toss><l_paren><ident><mult_op><ident><l_paren><ident><sub_op><literal><r_paren><r_paren>
+<endif>
 
-<ident>i(=1
-<ident>t<ident>x
-<ident>e
-<ident>t(*<ident>f(
-<ident>e
+<endfun>
 
-<ident>e
+<in_type><ident>
 
-<ident>i<ident>x
-<ident>g"<ident>n<ident>t<ident>b<ident>f
-<ident>t<ident>x
-<ident>i<ident>y<<ident>f
-<ident>g<ident>x"<ident>f<ident>i"<ident>y
+
+<in_type><ident><assign_op><ident><l_paren><ident><r_paren>
+
 

@@ -2,75 +2,179 @@
 
 	/* Plan of attack:
 		0. Make sure it's a .ram file
-		1. Strip comments.
-		2. Create input stream, make sure endlines are intact.
-
-		ISSUES:
-		- You HAVE to have a space before the "#" in a comment that's on the same line as a line of code.
+		1. explode file into array by line
+		2. explode line into array by words. KABOOM!
+		3. trim leading spaces and tabs from each word
+		4. check for tokens, maximum munch style
+		5. output tokens into separate text file. 
+		6. store identifier values in XML file
 	*/
 
-	function multiexplode ($delimiters, $string){
+	function multiexplode ($delimiters, $string){					//are we using this anymore?
 		$ready = str_replace($delimiters, $delimiters, $string);
 		$launch = explode($delimiters[0], $ready);
 		return $launch;
 	}
 
-	$tokens = array("ident", "in_type", "boo_type", "operator", "reserved", "left_paren", "right_paren");
-	$filename = $argv[1];
-	$input = file_get_contents($filename);
-	$lines = explode("\n", $input);
-	$no_comments = array();
+	$filename = $argv[1];								// currently not checking for .ram extension
+	$input = file_get_contents($filename);				
+	$lines = explode("\n", $input);						// creates array, where each index is a line of the input file
 	$count = 0;
+	$lineNumber=1;										//for error reporting
 	$tokenStream="";
-	foreach($lines as $line){
-		$pretoken = explode(" ",$line);
-		foreach ($pretoken as $word){
-			$no_space = trim($word);
-			$count = strlen($no_space);
-			$start=0;
-			$length=1;
-			$token="";
-			$val="";
-			$isWorddone=false;
-			$isLineDone=false;
-			for($i=0;$i<$count;$i++){
-				$str=substr($no_space,$start,$length);
+	$lexingError="";									// to be used in the event of an error
+	foreach($lines as $line){							// iterates through array of lines
+		$pretoken = explode(" ",$line);					// creates array of words in line
+		foreach ($pretoken as $word){					// iterates through words
+			$no_space = trim($word);					// eliminates leading and trailing spaces and tabs 
+			$count = strlen($no_space);					// need to know how long word is
+			$start=0;									// multiple tokens can be in one word, so start needs to be dynamic
+			$length=1;									// as with above, length needs to be dynamic as well
+			$token="";									// for assigning a token to a case 
+			$val="";									// for keeping the value of a token, for identifiers
+			$isCurrentMatch=false;						//this tracks if the current string has a match to any token that has not been tokenized
+			$isTokenDone=false;							// since default case checks for identifier and most substrings are valid identifiers, we need to store a token only with the largest string that is an identifier
+			$isWordDone=false;							//is the word finished? more than token can be in a word. bug: variable was not camelcase, meaning conditional below was always not false
+			$isLineDone=false;								
+			for($i=0;$i<$count;$i++){					
+				$str=substr($no_space,$start,$length);	//substring to be checked for a token
 				switch ($str){
-				case "#":
+				case"":
+					break;
+				case "#":								// no comments allowed. no need to check the rest of the line
 					$isWordDone=true;
 					$isLineDone=true;
-					break;	
-				default:
-					$matchTo = '/^[a-zA-Z]\w*/';
-					if(preg_match($matchTo, $str)!=1){
-						echo "We got to regX!\n";
-						$start += $length;
-						$length = 0;	
+					break;
+				case "(":
+					$token="<l_paren>";
+					$isCurrentMatch = true;
+					break;
+				case ")":
+					echo "debugging is fun\n";
+					$token="<r_paren>";
+					$isCurrentMatch = true;
+					break;
+				case "=":
+					$token="<compare_op>";
+					$isCurrentMatch = true;
+					break;
+				case "*":
+					$token="<mult_op>";
+					$isCurrentMatch = true;
+					break;
+				case "-":
+					$token="<sub_op>";
+					$isCurrentMatch = true;
+					break;
+				case "<":
+					$token="<less_op>";
+					$isCurrentMatch = true;
+					break;
+				case "<-":
+					$token="<assign_op>";
+					$isCurrentMatch = true;
+					break;
+				case "in":
+					$token="<in_type>";
+					$isCurrentMatch = true;
+					break;
+				case "as":
+					$token="<as>";
+					$isCurrentMatch = true;
+					break;
+				case "fun":
+					$token="<fun>";
+					$isCurrentMatch = true;
+					break;
+				case "endfun":
+					$token="<endfun>";
+					$isCurrentMatch = true;
+					break;
+				case "if":
+					$token="<if>";
+					$isCurrentMatch = true;
+					break;
+				case "endif":
+					$token="<endif>";
+					$isCurrentMatch = true;
+					break;
+				case "toss":
+					$token="<toss>";
+					$isCurrentMatch = true;
+					break;
+				default: 								//as far as we know, php siwtch statements must have string, and literals need regex matching which does not return string
+					$matchToNumLiteral ='/^[0-9]+(\.[0-9])?[0-9]*$/';		//currently assuming that a number literal CANNOT begin with a decimal
+					if(preg_match($matchToNumLiteral, $str)==1){
+							$token= "<literal>";
+							$isCurrentMatch = true;
+							//save val somehow here
 					}
 					else{
-						$token= "<ident>";
-						$val = $str;
+						/*   since give and take aren't allowed, not sure if there is a need for string literals
+
+						$matchToNumLiteral ='/^ idkyet $/';  //really, idk
+						if(preg_match($matchToStrLiteral, $str)==1){
+								$start += ($length-1);		// NOT regex match, longer than 1 char, go to last valid location
+								$length = 0;				//prepare for length increment
+								$isTokenDone=true;			//store last token as identifier
+								$token= "<literal>";
+								//save val somehow here
+						}
+						*/
+
+						$matchToIdent = '/^[a-zA-Z]\w*$/';		// bug: this was not anchored to end of string, so if there was a match at any point in the string, it passed
+						if(preg_match($matchToIdent, $str)!=1){	// if current str does NOT match regex, there are NO tokens it matches. can only reach here if at end of valid token, or invalid symbol
+							if(!$isCurrentMatch){					// this case is an invalid character, and therefore a lexing error
+								$lexingError="--Lexing Error: invalid symbol ".$str." on line ".$lineNumber."\n";
+							}
+							else{
+								$start += ($length-1);		// NOT regex match, but previous did match, go to last valid location
+								$length = 0;				//prepare for length increment
+								$isTokenDone=true;			//store last token as identifier
+								$i--;						//since we begin checking the char that was just checked, we have not progressed and need to change i accordingly
+
+								//save val somehow here
+							}
+						}
+						else{								//matches regex
+							$token= "<ident>";
+							$isCurrentMatch = true;
+
+							//save val here somehow
+						}
 					}
 
+				}		// end switch
+				
+				if( ($start+$length)==$count&&$isCurrentMatch){			//check to see if at end of word and if we have token
+					$isTokenDone=true;
 				}
-			$length++;
-			if($token!=""){
-				$tokenStream.=$token.$str;
-			}
+				if($isTokenDone){
+					$tokenStream.=$token;
+					$isTokenDone=false;
+					$isCurrentMatch=false;
+					$token="";
+				}
+				$length++;
 
-			if($isWordDone){
-				$token="";
+				if($isWordDone||$lexingError!=""){
+					break;
+				}
+			}  // end for loop, char by char iteration
+			if($isLineDone||$lexingError!=""){
 				break;
 			}
 
-		}
-		if($isLineDone){
-			$tokenStream.="\n";
+		} //end foreach word
+		if($lexingError!=""){
 			break;
 		}
-		}
 		$tokenStream.="\n";
-
+		$lineNumber++;
+	} //end foreach line
+	if($lexingError!=""){
+		echo $lexingError;
 	}
-	file_put_contents("token.txt", $tokenStream)
+	else
+		file_put_contents("token.txt", $tokenStream);
 ?>

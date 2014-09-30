@@ -1,4 +1,5 @@
 #Ramsey example program to calculate factorial.
+
 #Recursive function that returns factorial of an integer.
 fun factorial(in x) as in
 
@@ -11,7 +12,7 @@ fun factorial(in x) as in
 endfun
 
 in x
-give "Enter number to be factorialized."
-take x
+#give "Enter number to be factorialized."
+#take x
 in y <- factorial(x)
-give x " factorialized is " y
+#give x " factorialized is " y
