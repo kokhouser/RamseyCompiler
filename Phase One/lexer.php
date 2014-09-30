@@ -21,6 +21,7 @@
 	$lines = explode("\n", $input);
 	$no_comments = array();
 	$count = 0;
+	$tokenStream="";
 	foreach($lines as $line){
 		$pretoken = explode(" ",$line);
 		foreach ($pretoken as $word){
@@ -28,22 +29,48 @@
 			$count = strlen($no_space);
 			$start=0;
 			$length=1;
-			$isDone=false;
+			$token="";
+			$val="";
+			$isWorddone=false;
+			$isLineDone=false;
 			for($i=0;$i<$count;$i++){
-				switch (substr($no_space,$start,$length)){
+				$str=substr($no_space,$start,$length);
+				switch ($str){
 				case "#":
-					$isDone=true;
-					break;			
+					$isWordDone=true;
+					$isLineDone=true;
+					break;	
+				default:
+					$matchTo = '/^[a-zA-Z]\w*/';
+					if(preg_match($matchTo, $str)!=1){
+						echo "We got to regX!\n";
+						$start += $length;
+						$length = 0;	
+					}
+					else{
+						$token= "<ident>";
+						$val = $str;
+					}
+
+				}
+			$length++;
+			if($token!=""){
+				$tokenStream.=$token.$str;
 			}
 
-			if($isDone)
+			if($isWordDone){
+				$token="";
 				break;
 			}
-		if($isDone)
-			break;
-		echo "$word ";
-		}
-		echo "\n";
-	}
 
+		}
+		if($isLineDone){
+			$tokenStream.="\n";
+			break;
+		}
+		}
+		$tokenStream.="\n";
+
+	}
+	file_put_contents("token.txt", $tokenStream)
 ?>

@@ -1,3 +1,5 @@
 <?php
-echo substr('abcdef', 0,10);
+$matchTo = '/^[a-zA-Z]\w*/';
+if(preg_match($matchTo, $str)!=1){
+
 ?>
