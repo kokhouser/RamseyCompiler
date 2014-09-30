@@ -10,12 +10,6 @@
 		6. store identifier values in XML file
 	*/
 
-	function multiexplode ($delimiters, $string){					//are we using this anymore?
-		$ready = str_replace($delimiters, $delimiters, $string);
-		$launch = explode($delimiters[0], $ready);
-		return $launch;
-	}
-
 	$filename = $argv[1];								// currently not checking for .ram extension
 	$input = file_get_contents($filename);
 	$lines = explode("\n", $input);						// creates array, where each index is a line of the input file
@@ -50,7 +44,7 @@
 					$isCurrentMatch = true;
 					break;
 				case ")":
-					echo "debugging is fun\n";
+					//echo "debugging is fun\n";
 					$token="<r_paren>";
 					$isCurrentMatch = true;
 					break;
