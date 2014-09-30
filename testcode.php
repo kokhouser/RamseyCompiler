@@ -1,5 +1,10 @@
 <?php
-$matchTo = '/^[a-zA-Z]\w*/';
-if(preg_match($matchTo, $str)!=1){
+$matchTo = '/^[a-zA-Z]*/';
+if($matchTo = "dassja(9)jd(gas)$Q##$@#%gjasg(d(" ){
+    echo "pass \n" ;
+}
+else{
+    echo "fail \n";
+}
 
 ?>
