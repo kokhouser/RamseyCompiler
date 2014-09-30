@@ -6,7 +6,7 @@
 		2. explode line into array by words. KABOOM!
 		3. trim leading spaces and tabs from each word
 		4. check for tokens, maximum munch style
-		5. output tokens into separate text file. 
+		5. output tokens into separate text file.
 		6. store identifier values in XML file
 	*/
 
@@ -17,7 +17,7 @@
 	}
 
 	$filename = $argv[1];								// currently not checking for .ram extension
-	$input = file_get_contents($filename);				
+	$input = file_get_contents($filename);
 	$lines = explode("\n", $input);						// creates array, where each index is a line of the input file
 	$count = 0;
 	$lineNumber=1;										//for error reporting
@@ -26,20 +26,20 @@
 	foreach($lines as $line){							// iterates through array of lines
 		$pretoken = explode(" ",$line);					// creates array of words in line
 		foreach ($pretoken as $word){					// iterates through words
-			$no_space = trim($word);					// eliminates leading and trailing spaces and tabs 
+			$no_space = trim($word);					// eliminates leading and trailing spaces and tabs
 			$count = strlen($no_space);					// need to know how long word is
 			$start=0;									// multiple tokens can be in one word, so start needs to be dynamic
 			$length=1;									// as with above, length needs to be dynamic as well
-			$token="";									// for assigning a token to a case 
+			$token="";									// for assigning a token to a case
 			$val="";									// for keeping the value of a token, for identifiers
 			$isCurrentMatch=false;						//this tracks if the current string has a match to any token that has not been tokenized
 			$isTokenDone=false;							// since default case checks for identifier and most substrings are valid identifiers, we need to store a token only with the largest string that is an identifier
 			$isWordDone=false;							//is the word finished? more than token can be in a word. bug: variable was not camelcase, meaning conditional below was always not false
-			$isLineDone=false;								
-			for($i=0;$i<$count;$i++){					
+			$isLineDone=false;
+			for($i=0;$i<$count;$i++){
 				$str=substr($no_space,$start,$length);	//substring to be checked for a token
 				switch ($str){
-				case"":
+				case "":
 					break;
 				case "#":								// no comments allowed. no need to check the rest of the line
 					$isWordDone=true;
@@ -58,6 +58,14 @@
 					$token="<compare_op>";
 					$isCurrentMatch = true;
 					break;
+				case "+":
+					$token="<add_op>";
+					$isCurrentMatch = true;
+					break;
+				case "%":
+					$token="<mod_op>";
+					$isCurrentMatch = true;
+					break;
 				case "*":
 					$token="<mult_op>";
 					$isCurrentMatch = true;
@@ -70,12 +78,48 @@
 					$token="<less_op>";
 					$isCurrentMatch = true;
 					break;
+				case ">":
+					$token="<greater_op>";
+					$isCurrentMatch = true;
+					break;
+				case "<=":
+					$token="<lesseq_op>";
+					$isCurrentMatch = true;
+					break;
+				case ">=":
+					$token="<greateq_op>";
+					$isCurrentMatch = true;
+					break;
+				case "!=":
+					$token="<noteq_op>";
+					$isCurrentMatch = true;
+					break;
+				case "AND":
+					$token="<and_op>";
+					$isCurrentMatch = true;
+					break;
+				case "OR":
+					$token="<or_op>";
+					$isCurrentMatch = true;
+					break;
 				case "<-":
 					$token="<assign_op>";
 					$isCurrentMatch = true;
 					break;
 				case "in":
 					$token="<in_type>";
+					$isCurrentMatch = true;
+					break;
+				case "small":
+					$token="<small_type>";
+					$isCurrentMatch = true;
+					break;
+				case "big":
+					$token="<big_type>";
+					$isCurrentMatch = true;
+					break;
+				case "boo":
+					$token="<boo_type>";
 					$isCurrentMatch = true;
 					break;
 				case "as":
@@ -102,8 +146,24 @@
 					$token="<toss>";
 					$isCurrentMatch = true;
 					break;
-				default: 								//as far as we know, php siwtch statements must have string, and literals need regex matching which does not return string
-					$matchToNumLiteral ='/^[0-9]+(\.[0-9])?[0-9]*$/';		//currently assuming that a number literal CANNOT begin with a decimal
+				case "else":
+					$token="<else>";
+					$isCurrentMatch = true;
+					break;
+				case "elf":
+					$token="<elf>";
+					$isCurrentMatch = true;
+					break;
+				case "while":
+					$token="<while>";
+					$isCurrentMatch = true;
+					break;
+				case "endwhile":
+					$token="<endwhile>";
+					$isCurrentMatch = true;
+					break;
+				default: 								//as far as we know, php switch statements must have string, and literals need regex matching which does not return string
+					$matchToNumLiteral ='/^[0-9]*$/';		//currently assuming that a number literal CANNOT begin with a decimal
 					if(preg_match($matchToNumLiteral, $str)==1){
 							$token= "<literal>";
 							$isCurrentMatch = true;
@@ -150,7 +210,7 @@
 					$isTokenDone=true;
 				}
 				if($isTokenDone){
-					$tokenStream.=$token;
+					$tokenStream.=$token."\n";
 					$isTokenDone=false;
 					$isCurrentMatch=false;
 					$token="";
@@ -169,7 +229,7 @@
 		if($lexingError!=""){
 			break;
 		}
-		$tokenStream.="\n";
+		//$tokenStream.="\n";
 		$lineNumber++;
 	} //end foreach line
 	if($lexingError!=""){
