@@ -19,6 +19,10 @@
 	class IdentToken extends Token{
 	  public $name;
 	}
+	
+	class LiteralToken extends Token{
+	  public $value;
+	}
 
 	$filename = $argv[1];								// currently not checking for .ram extension
 	$input = file_get_contents($filename);
@@ -28,6 +32,7 @@
 	$tokenStream="";
 	$lexingError="";									// to be used in the event of an error
 	$tokenId= 0;
+	$tokenArray = array();
 	foreach($lines as $line){							// iterates through array of lines
 		$pretoken = explode(" ",$line);					// creates array of words in line
 		foreach ($pretoken as $word){					// iterates through words
@@ -225,8 +230,17 @@
 					  $newToken -> id = $tokenId;
 					  $newToken -> name = $strname;
 					  $strname = "";
+					  $tokenId++; //Increment token ID counter.
+					  $tokenArray[] = $newToken;
+					  //print_r($tokenArray); //Debugging statement.
+					}
+					else if ($token == "<literal>"){
+					  $newLitToken = new LiteralToken();
+					  $newLitToken -> id = $tokenId;
+					  $newLitToken -> value = $strname;
+					  $strname = "";
 					  $tokenId++;
-					  echo $newToken -> name;
+					  $tokenArray[] = $newLitToken;
 					}
 					$token="";
 				}
@@ -252,4 +266,5 @@
 	}
 	else
 		file_put_contents("token.txt", $tokenStream);
+		//print_r($tokenArray); //Debugging statement.
 ?>
