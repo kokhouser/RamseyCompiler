@@ -225,6 +225,7 @@
 					  $newToken -> id = $tokenId;
 					  $newToken -> name = $strname;
 					  $strname = "";
+					  $tokenId++;
 					  echo $newToken -> name;
 					}
 					$token="";
