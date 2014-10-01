@@ -9,6 +9,16 @@
 		5. output tokens into separate text file.
 		6. store identifier values in XML file
 	*/
+	
+	//Token class test
+	
+	class Token{
+	  public $id;
+	}
+	
+	class IdentToken extends Token{
+	  public $name;
+	}
 
 	$filename = $argv[1];								// currently not checking for .ram extension
 	$input = file_get_contents($filename);
@@ -17,6 +27,7 @@
 	$lineNumber=1;										//for error reporting
 	$tokenStream="";
 	$lexingError="";									// to be used in the event of an error
+	$tokenId= 0;
 	foreach($lines as $line){							// iterates through array of lines
 		$pretoken = explode(" ",$line);					// creates array of words in line
 		foreach ($pretoken as $word){					// iterates through words
@@ -30,6 +41,7 @@
 			$isTokenDone=false;							// since default case checks for identifier and most substrings are valid identifiers, we need to store a token only with the largest string that is an identifier
 			$isWordDone=false;							//is the word finished? more than token can be in a word. bug: variable was not camelcase, meaning conditional below was always not false
 			$isLineDone=false;
+			$strname = "";
 			for($i=0;$i<$count;$i++){
 				$str=substr($no_space,$start,$length);	//substring to be checked for a token
 				switch ($str){
@@ -193,7 +205,7 @@
 						else{								//matches regex
 							$token= "<ident>";
 							$isCurrentMatch = true;
-
+              $strname = $str;
 							//save val here somehow
 						}
 					}
@@ -207,6 +219,14 @@
 					$tokenStream.=$token."\n";
 					$isTokenDone=false;
 					$isCurrentMatch=false;
+					//Token class test
+					if ($token == "<ident>"){
+					  $newToken = new IdentToken();
+					  $newToken -> id = $tokenId;
+					  $newToken -> name = $strname;
+					  $strname = "";
+					  echo $newToken -> name;
+					}
 					$token="";
 				}
 				$length++;
