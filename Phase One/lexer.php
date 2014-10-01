@@ -52,6 +52,10 @@
 				switch ($str){
 				case "":
 					break;
+				case "\t":
+					$token="";
+					$isCurrentMatch=true;
+					break;
 				case "#":								// no comments allowed. no need to check the rest of the line
 					$isWordDone=true;
 					$isLineDone=true;
@@ -73,12 +77,16 @@
 					$token="<add_op>";
 					$isCurrentMatch = true;
 					break;
-				case "%":
+				case "mod":
 					$token="<mod_op>";
 					$isCurrentMatch = true;
 					break;
 				case "*":
 					$token="<mult_op>";
+					$isCurrentMatch = true;
+					break;
+				case "/":
+					$token="<div_op>";
 					$isCurrentMatch = true;
 					break;
 				case "-":
@@ -133,6 +141,9 @@
 					$token="<boo_type>";
 					$isCurrentMatch = true;
 					break;
+				case ",":
+					$token="<comma>";
+					$isCurrentMatch=true;
 				case "as":
 					$token="<as>";
 					$isCurrentMatch = true;
@@ -221,7 +232,8 @@
 					$isTokenDone=true;
 				}
 				if($isTokenDone){
-					$tokenStream.=$token."\n";
+					if($token != "")
+						$tokenStream.=$token."\n";
 					$isTokenDone=false;
 					$isCurrentMatch=false;
 					//Token class test
@@ -251,6 +263,7 @@
 				}
 			}  // end for loop, char by char iteration
 			if($isLineDone||$lexingError!=""){
+				$tokenStream.="<endl>\n";
 				break;
 			}
 
@@ -265,6 +278,7 @@
 		echo $lexingError;
 	}
 	else
-		file_put_contents("token.txt", $tokenStream);
+		echo $tokenStream;
+		//file_put_contents("token.txt", $tokenStream);
 		//print_r($tokenArray); //Debugging statement.
 ?>
