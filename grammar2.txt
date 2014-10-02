@@ -3,14 +3,13 @@
 
 <program> 	   	-> <top_lvl_stmt>
 <top_lvl_stmt> 	-> <top_lvl_stmt> <endl> <top_lvl_stmt>
-				| <stmts>
 				| fun <ident> (<params>) as <type> \n <stmts> endfun
 <params>	   	-> <param>, <params>
 			   	-> <param>
 			   	-> ε
 <param>		   	-> <type> <ident>
 <stmts>		   	-> <stmt> \n <stmts>
-			    | <stmt>
+			    | <stmt> 
 <stmt>		   	-> <conditional>
 				| <assignment>
 				| ε
@@ -49,14 +48,14 @@
 				| AND
 				| OR
 
-<literals>		-> "((?!").)*"
-				|  <digit><digit>*
-				|  <digit>*.<digit><digit>*
+<literals>		-> <digit><digit>*
 				|  true
 				|  false
 <ident>			-> <letter><letter|digit|underscore>*
 <type>			-> in
-				|  boo
+				| boo
+				| big
+				| small
 #################### PUT UNSURE PRODUCTIONS AND TERMINALS BEYOND HERE ########################################
 
 
