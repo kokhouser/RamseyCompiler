@@ -4,7 +4,7 @@
 <program> 	   	-> <top_lvl_stmt>
 <top_lvl_stmt> 	-> <top_lvl_stmt> <endl> <top_lvl_stmt>
 				| fun <ident> (<params>) as <type> \n <stmts> endfun
-<params>	   	-> <param>, <params>
+<params>	   	-> <param> , <params>
 			   	-> <param>
 			   	-> ε
 <param>		   	-> <type> <ident>
@@ -17,9 +17,9 @@
 				| <declaration>
 <declaration>		-> <type> <ident>
 				| <type> <ident> [<digit><digit>*]
-<assignment>	-> ident <- <expression>
-				| type ident <- <expression>
-				| type ident[<digit><digit>*]<- <expression>
+<assignment>	-> <ident> <- <expression>
+				| <type> <ident> <- <expression>
+				| <type> <ident>[<digit><digit>*]<- <expression>
 <conditional>  	-> if (<expression>) \n <stmts> <elfears> endif
 			    | while (<expression>) \n <stmts> endwhile
 <elfears>	   	-> elf( <expression> ) <stmts>
@@ -28,7 +28,7 @@
 			    | ε
 <expression>   	-> <ident>
 				| <ident> [<digit><digit>*]
-				| <literal>
+				| <literals>
 				| NOT (<expression>)
 				| <ident>( <params> )
 				| <expression> <op> <expression>
