@@ -35,6 +35,7 @@
 	$tokenArray = array();
 	foreach($lines as $line){							// iterates through array of lines
 		$pretoken = explode(" ",$line);					// creates array of words in line
+		$multiendl = true;
 		foreach ($pretoken as $word){					// iterates through words
 			$no_space = trim($word);					// eliminates leading and trailing spaces and tabs
 			$count = strlen($no_space);					// need to know how long word is
@@ -45,7 +46,6 @@
 			$isCurrentMatch=false;						//this tracks if the current string has a match to any token that has not been tokenized
 			$isTokenDone=false;							// since default case checks for identifier and most substrings are valid identifiers, we need to store a token only with the largest string that is an identifier
 			$isWordDone=false;							//is the word finished? more than token can be in a word. bug: variable was not camelcase, meaning conditional below was always not false
-			$multiendl = true;
 			$isLineDone=false;
 			$strname = "";
 			for($i=0;$i<$count;$i++){
