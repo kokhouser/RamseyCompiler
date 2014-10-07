@@ -308,7 +308,7 @@
 		}
 		//$tokenStream.="\n";
 		$lineNumber++;
-		if ($multiendl = false){
+		if ($multiendl == false){
 		  $tokenStream.="<endl>\n";
 		  $multiendl = true;
 		}
