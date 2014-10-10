@@ -9,8 +9,10 @@
 <paramlist>		-> <comma> <param> <paramlist>
 				| ε
 <param>		   	-> <type> <ident>
-<stmts>		   	-> <stmt> <endl> <stmts>
-			    | <stmt> 
+<stmts>		   	-> <stmt> <morestmts>
+<morestmts>		-> <endl> <stmts>
+			    | ε
+
 <stmt>		   	-> <conditional>
 				| <assignment>
 				| ε
