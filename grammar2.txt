@@ -1,14 +1,15 @@
 ### Grammar for the programming language Ramsey.
 ## Add all productions in their respective terminals, put undecided productions and terminals beyond the line.
 
-<program> 	   	-> <top_lvl_stmt>
-<top_lvl_stmt> 	-> <top_lvl_stmt> <endl> <top_lvl_stmt>
-				| fun <ident> (<params>) as <type> \n <stmts> endfun
-<params>	   	-> <param> , <params>
-			   	-> <param>
-			   	-> ε
+<program> 	   	-> <top_lvl_stmts>
+<top_lvl_stmts> 	-> <top_lvl_stmt> <endl> <top_lvl_stmts>
+<top_lvl_stmt>		-> fun <ident> (<params>) as <type> <endl> <stmts> endfun
+<params>	   	-> <param> <paramlist>
+			   	| ε
+<paramlist>		-> <comma> <param> <paramlist>
+				| ε
 <param>		   	-> <type> <ident>
-<stmts>		   	-> <stmt> \n <stmts>
+<stmts>		   	-> <stmt> <endl> <stmts>
 			    | <stmt> 
 <stmt>		   	-> <conditional>
 				| <assignment>
@@ -16,24 +17,20 @@
 				| <expression>
 				| <declaration>
 <declaration>		-> <type> <ident>
-				| <type> <ident> [<digit><digit>*]
 <assignment>	-> <ident> <- <expression>
-				| <type> <ident> <- <expression>
-				| <type> <ident>[<digit><digit>*]<- <expression>
-<conditional>  	-> if (<expression>) \n <stmts> <elfears> endif
+				| <declaration> <- <expression>
+<conditional>  	-> if (<expression>) <endl> <stmts> <elfears> endif
 			    | while (<expression>) \n <stmts> endwhile
-<elfears>	   	-> elf( <expression> ) <stmts>
-			    | elf( <expression> ) <stmts> <elfears>
+<elfears>	   	-> elf ( <expression> ) <stmts>
+			    | elf ( <expression> ) <stmts> <elfears>
 			    | else <stmts>
 			    | ε
 <expression>   	-> <ident>
-				| <ident> [<digit><digit>*]
 				| <literals>
 				| NOT (<expression>)
 				| <ident>( <params> )
 				| <expression> <op> <expression>
 				| (expression)
-<val>		-> 
 <op>			-> +
 				|  -
 				|  *
