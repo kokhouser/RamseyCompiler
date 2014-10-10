@@ -14,28 +14,31 @@
 			    | ε
 
 <stmt>		   	-> <conditional>
-				| <assignment>
 				| ε
-				| <expression>
-				| <declaration>
+				| toss <expression>
+				| <varhandler>
+<varhandler>  -> <ident> <assignment>
+        | <declaration> <catassign>
 <declaration>		-> <type> <ident>
-<assignment>	-> <ident> <- <expression>
-				| <declaration> <- <expression>
-<conditional>  	-> if (<expression>) <endl> <stmts> <elfears> endif
-			    | while (<expression>) \n <stmts> endwhile
-<elfears>	   	-> elf ( <expression> ) <stmts>
-			    | elf ( <expression> ) <stmts> <elfears>
+<assignment>	-> <- <toplevelexpression>
+<catassign>   -> <assignment>
+        | ε
+<conditional>  	-> if (<toplevelexpression>) <endl> <stmts> <elfears> endif
+			    | while (<toplevelexpression>) \n <stmts> endwhile
+<elfears>	   	-> elf ( <toplevelexpression> ) <stmts>
+			    | elf ( <toplevelexpression> ) <stmts> <elfears>
 			    | else <stmts>
 			    | ε
-<expression>   	-> <ident>
+<topexpression> -> <expression><expressionlist>
+        | (<expression><expressionlist>) <expressionlist>
+<expressionlist>  -> <op> <topexpression>
+        | ε
+<expression>   	-> <ident> <funcall>
 				| <literals>
-				| NOT (<expression>)
-				| <ident>( <params> )
-				| <expression> <op> <expression>
-				| (expression)
-<op>			-> +
-				|  -
-				|  *
+				| NOT (<topexpression>)
+<funcall>       -> ( <params> )
+        | ε
+<fop>			-> *
 				|  /
 				|  %
 				|  <
@@ -46,6 +49,8 @@
 				|  !=
 				| AND
 				| OR
+<sop>     -> +
+        | -
 
 <literals>		-> <digit><digit>*
 				|  true
