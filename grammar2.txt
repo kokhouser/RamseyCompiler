@@ -25,13 +25,13 @@
         | ε
 <conditional>  	-> if (<toplevelexpression>) <endl> <stmts> <elfears> endif
 			    | while (<toplevelexpression>) \n <stmts> endwhile
-<elfears>	   	-> elf ( <toplevelexpression> ) <stmts>
-			    | elf ( <toplevelexpression> ) <stmts> <elfears>
+<elfears>	   	-> elf ( <toplevelexpression> ) <stmts> <elfears>
 			    | else <stmts>
 			    | ε
 <topexpression> -> <expression><expressionlist>
         | (<expression><expressionlist>) <expressionlist>
-<expressionlist>  -> <op> <topexpression>
+<expressionlist>  -> <fop> <topexpression>
+	| <sop> <topexpression>
         | ε
 <expression>   	-> <ident> <funcall>
 				| <literals>
