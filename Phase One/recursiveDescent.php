@@ -49,35 +49,47 @@
 		private function toplvlstmt(){
 			if($this->lookahead=="<fun>"){
 				//match <fun>
-				$this->pushLookahead;
+				$this->pushLookahead();
 				
 				$this->ident();
 				
 				//match <l_paren>
-				$this->pushLookahead;
+				$this->pushLookahead();
 
 				$this->params();
 
 				//match <r_paren>
-				$this->pushLookahead;
+				$this->pushLookahead();
 
 				//match as
-				$this->pushLookahead;
+				$this->pushLookahead();
 
 				$this->type();
 
 				//match endl
 				$this->lineNum+=1;
-				$this->pushLookahead;
+				$this->pushLookahead();
 
 				$this->stmts();
 
 				//match endfun
-				$this->pushLookahead;
+				$this->pushLookahead();
 			}
 			else{
 				return "error: expected token <fun> on line ".$lineNum."\n";
 			}
+		}
+		
+		private function params(){
+		    if($this->lookahead=="in"||$this->lookahead=="boo"||$this->lookahead=="big"||$this->lookahead=="small"){
+		        $this->param();
+		        $this->pushLookahead();
+		        $this->paramlist();
+		        $this->pushLookahead();
+		    }
+		    else{
+		        $this -> pushLookahead();
+		    }
 		}
 
 	}
