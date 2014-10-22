@@ -20,18 +20,17 @@
 <varhandler>  -> <ident> <assignment>
         | <declaration> <catassign>
 <declaration>		-> <type> <ident>
-<assignment>	-> <- <toplevelexpression>
+<assignment>	-> <- <topexpression>
 <catassign>   -> <assignment>
         | ε
-<conditional>  	-> if (<toplevelexpression>) <endl> <stmts> <elfears> endif
-			    | while (<toplevelexpression>) \n <stmts> endwhile
-<elfears>	   	-> elf ( <toplevelexpression> ) <stmts> <elfears>
+<conditional>  	-> if (<topexpression>) <endl> <stmts> <elfears> endif
+			    | while (<topexpression>) \n <stmts> endwhile
+<elfears>	   	-> elf ( <topexpression> ) <stmts> <elfears>
 			    | else <stmts>
 			    | ε
 <topexpression> -> <expression><expressionlist>
         | (<expression><expressionlist>) <expressionlist>
-<expressionlist>  -> <fop> <topexpression>
-	| <sop> <topexpression>
+<expressionlist>  -> <sop> <topexpression>
         | ε
 <expression>   	-> <ident> <funcall>
 				| <literals>
@@ -51,6 +50,7 @@
 				| OR
 <sop>     -> +
         | -
+        | <fop>
 
 <literals>		-> <digit><digit>*
 				|  true
