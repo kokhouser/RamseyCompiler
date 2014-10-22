@@ -4,7 +4,7 @@
 		private $tokens;
 		private $index;
 		private $lookahead;
-		private $lineNum
+		private $lineNum;
 
 		public function __construct($arr){
 			$this->tokens = $arr;
@@ -29,7 +29,7 @@
 		}
 
 		private function toplvlstmts(){
-			if($this->lookahead)=="<fun>"){
+			if(($this->lookahead)=="<fun>"){
 				$this->toplvlstmt();
 
 				//match endl
@@ -61,7 +61,7 @@
 				//match <r_paren>
 				$this->pushLookahead;
 
-				//match as 
+				//match as
 				$this->pushLookahead;
 
 				$this->type();
