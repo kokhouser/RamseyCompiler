@@ -75,10 +75,8 @@
 		    if($this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"
 		    	||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>" ){
 		    	$this->param();
-		        $this->pushLookahead();
 		        $this->paramlist();
-		        $this->pushLookahead();
-		    }
+            }
 		}
         
         private function paramlist(){
@@ -86,7 +84,6 @@
 		        //match <comma>
 		        $this->pushLookahead();
 		        $this->params();
-		        $this->pushLookahead();
             }
 		}
         
@@ -94,9 +91,7 @@
 		    if($this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"
 		    	||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>" ){
 		        $this->type();
-		        $this->pushLookahead();
 		        $this->ident();
-		        $this->pushLookahead();
 		    }
 		    else{
 		        return "error: expected token <type> on line ".$lineNum."\n";
@@ -108,9 +103,7 @@
 		    ||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"|$this->lookahead=="<literal>"
 		    ||$this->lookahead=="<true>"||$this->lookahead=="<false>"||$this->lookahead=="<not_op>"||$this->lookahead=="<toss>" ){
 		        $this->stmt();
-		        $this->pushLookahead();
 		        $this->morestmts();
-		        $this->pushLookahead();
 		    }
 		    else{
 		        return "error: expected token <if>, <while>, <ident>, <type>, <literal>, or <not_op> on line ".$lineNum."\n";
@@ -122,29 +115,35 @@
 		        //match <endl>
 		        $this->pushLookahead();
 		        $this->stmts();
-                $this->pushLookahead();
 		    }
 		}
 
         private function stmt(){
             if ($this->lookahead=="<if>" || $this->lookahead=="<while>"){
                 $this->conditional();
-                $this->pushLookahead();
             }
             else if ($this->lookahead=="<toss>"){
                 //match <toss>
                 $this->pushLookahead();
                 $this->expression();
-                $this->pushLookahead();
             }
             else if ($this->lookahead=="<ident>"||$this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"){
                 $this->varhandler();
-                $this->pushLookahead();
             }
             else{
 		        return "error: expected token <if>, <while>, <ident>, <type>, <literal>, or <not_op> on line ".$lineNum."\n";
+            }
 
         }
+        
+        private function varhandler(){
+            if ($this->lookahead=="<ident>"){
+                //match <ident>
+                $this->pushLookahead();
+            }
+        }
+        
+        
 	}
 
 ?>
