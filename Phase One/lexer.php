@@ -128,13 +128,18 @@
 					$isCurrentMatch = true;
 					$multiendl = false;
 					break;
-				case "AND":
+				case "and":
 					$token="<and_op>";
 					$isCurrentMatch = true;
 					$multiendl = false;
 					break;
-				case "OR":
+				case "or":
 					$token="<or_op>";
+					$isCurrentMatch = true;
+					$multiendl = false;
+					break;
+				case "not":
+					$token="<not_op>";
 					$isCurrentMatch = true;
 					$multiendl = false;
 					break;
@@ -163,10 +168,21 @@
 					$isCurrentMatch = true;
 					$multiendl = false;
 					break;
+				case "true":
+					$token="<true>";
+					$isCurrentMatch = true;
+					$multiendl = false;
+					break;
+				case "false":
+					$token="<false>";
+					$isCurrentMatch = true;
+					$multiendl = false;
+					break;
 				case ",":
 					$token="<comma>";
 					$isCurrentMatch=true;
 					$multiendl = false;
+					break;
 				case "as":
 					$token="<as>";
 					$isCurrentMatch = true;

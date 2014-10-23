@@ -50,28 +50,19 @@
 			if($this->lookahead=="<fun>"){
 				//match <fun>
 				$this->pushLookahead();
-				
 				$this->ident();
-				
 				//match <l_paren>
 				$this->pushLookahead();
-
 				$this->params();
-
 				//match <r_paren>
 				$this->pushLookahead();
-
 				//match as
 				$this->pushLookahead();
-
 				$this->type();
-
 				//match endl
 				$this->lineNum+=1;
 				$this->pushLookahead();
-
 				$this->stmts();
-
 				//match endfun
 				$this->pushLookahead();
 			}
@@ -94,7 +85,7 @@
 		}
         
         private function paramlist(){
-		    if($this->lookahead== <comma> ){
+		    if($this->lookahead== "<comma>" ){
 		        $this->params();
 		        $this->pushLookahead();
             }
@@ -117,12 +108,14 @@
 		}
         
         private function stmts(){
-		    if($this->lookahead=="<if>"||$this->lookahead=="<while>"||$this->lookahead=="<ident>"||$this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"|$this->lookahead=="<literal>"||$this->lookahead=="true"||$this->lookahead=="false"||$this->lookahead=="NOT" ){
+		    if($this->lookahead=="<if>"||$this->lookahead=="<while>"||$this->lookahead=="<ident>"||$this->lookahead=="<in_type>"
+		    ||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"|$this->lookahead=="<literal>"
+		    ||$this->lookahead=="<true>"||$this->lookahead=="<false>"||$this->lookahead=="<not_op>" ){
 		        $this->stmt();
 		        $this->pushLookahead();
 		    }
 		    else{
-		        return "error".$lineNum."\n";
+		        return "error: expected token <if>, <while>, <ident>, <type>, <literal>, or <not_op> on line ".$lineNum."\n";
 		    }
 		}
 
