@@ -137,10 +137,11 @@
                 $this->expression();
                 $this->pushLookahead();
             }
-            else if ($this->lookahead=="<ident>"||$this->lookahead=="<in>"||$this->lookahead=="<boo>"||$this->lookahead=="<big>"||$this->lookahead=="<small>"){
+            else if ($this->lookahead=="<ident>"||$this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"){
                 $this->varhandler();
                 $this->pushLookahead();
             }
+
         }
 	}
 
