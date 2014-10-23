@@ -37,7 +37,7 @@
 				
 				$this->toplvlstmts();
 			}
-			else if(is_null($this->lookahead)){ 	//do we want to append end of input token to end of stream to be used instead of null?
+			else if(is_null($this->lookahead)){ 	//do we want to append end of input token to end of stream to be used instead of null? (I think we should!)
 				return NULL;
 			}
 			else{
@@ -89,6 +89,38 @@
 		    }
 		    else{
 		        $this -> pushLookahead();
+		    }
+		}
+        
+        private function paramlist(){
+		    if($this->lookahead== <comma> ){
+		        $this->params();
+		        $this->pushLookahead();
+            }
+		    else{
+		        return "error: expected token <comma> on line ".$lineNum."\n";
+		    }
+		}
+        
+        private function param(){
+		    if($this->lookahead=="in"||$this->lookahead=="boo"||$this->lookahead=="big"||$this->lookahead=="small" ){
+		        $this->type();
+		        $this->pushLookahead();
+		        $this->ident();
+		        $this->pushLookahead();
+		    }
+		    else{
+		        return "error: expected token <type> on line ".$lineNum."\n";
+		    }
+		}
+        
+        private function stmts(){
+		    if($this->lookahead=="if"||$this->lookahead=="while"||$this->lookahead=="<letter>"||$this->lookahead=="in"||$this->lookahead=="boo"||$this->lookahead=="big"||$this->lookahead=="small"|$this->lookahead=="<digit>"||$this->lookahead=="true"||$this->lookahead=="false"||$this->lookahead=="NOT" ){
+		        $this->stmt();
+		        $this->pushLookahead();
+		    }
+		    else{
+		        return "error".$lineNum."\n";
 		    }
 		}
 
