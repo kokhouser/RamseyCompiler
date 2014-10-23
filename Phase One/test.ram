@@ -16,3 +16,6 @@ in x
 #take x
 in y <- factorial(x)
 #give x " factorialized is " y
+true
+false
+not
