@@ -7,7 +7,7 @@
 <top_lvl_stmt>		-> fun <ident> (<params>) as <type> <endl> <stmts> endfun
 <params>	   	-> <param> <paramlist>
 			   	| ε
-<paramlist>		-> <comma> <param> <paramlist>
+<paramlist>		-> <comma> <params>
 				| ε
 <param>		   	-> <type> <ident>
 <stmts>		   	-> <stmt> <morestmts>
