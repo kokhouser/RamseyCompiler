@@ -3,6 +3,7 @@
 
 <program> 	   	-> <top_lvl_stmts>
 <top_lvl_stmts> 	-> <top_lvl_stmt> <endl> <top_lvl_stmts>
+				| ε
 <top_lvl_stmt>		-> fun <ident> (<params>) as <type> <endl> <stmts> endfun
 <params>	   	-> <param> <paramlist>
 			   	| ε
@@ -52,9 +53,10 @@
         | -
         | <fop>
 
-<literals>		-> <digit><digit>*
-				|  true
-				|  false
+<literals>		-> <literal>
+				|  <true>
+				|  <false>
+<literal> 		-> <digit><digit>*
 <ident>			-> <letter><letter|digit|underscore>*
 <type>			-> in
 				| boo

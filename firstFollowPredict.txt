@@ -1,0 +1,120 @@
+First (<program>): { fun } 
+First (<top_lvl_stmts>): {fun}
+First (<top_lvl_stmt>): { fun } 
+First (<params>): { in, boo, big, small }
+First(<paramlist>): {<comma>}
+First (<param>): { in, boo, big, small }
+First (<stmts>): { if, while, <letter>, in, boo, big, small, <digit>,true, false, NOT, ( , toss}
+First (<morestmts>): {<endl>}
+First (<stmt>): { if, while, <letter>, in, boo, big, small, <digit>,true, false, NOT, ( , toss}
+First (<varhandler>): {<letter>, in, boo, big, small}
+First (<declaration>): { in, boo, big, small }
+First (<assignment>): { <assign_op> }
+First (<catassign>): { <assign_op> }
+First (<conditional>): { if, while }
+First (<elfears>): { elf, else }
+First (<topexpression>): {<letter>, <digit>, true, false, NOT, ( }
+First(<expressionlist>): {+, -, *, / , %, < ,>, <=, >=, =, !=, AND, OR }
+First (<expression>): { <letter>, <digit>,true, false, NOT }
+First (<funcall>): {(}
+First (<fop>): { *, / , %, < ,>, <=, >=, =, !=, AND, OR }
+First (<sop>): {+, -, *, / , %, < ,>, <=, >=, =, !=, AND, OR }
+First (<literals>): { <digit>,true, false }
+First (<ident>): { <letter> }
+First (<type>): { in, boo, big, small }
+
+
+
+
+Follow (<program>): { $ } 
+Follow (<top_lvl_stmt>): { <endl> , $} 
+Follow (<params>): { )  }
+Follow (<paramlist>): {)}
+Follow (<param>): { <comma>, ) }
+Follow (<stmts>): { elf, endwhile , endfun, else, endif } 
+Follow (<stmt>): { <endl>, elf, endwhile , endfun, else, endif  } 
+Follow (<morestmts>): {elf, endwhile, endfun, else, endif}
+Follow(<varhandler>): {<endl>, elf, endwhile, endfun, else , endif}
+Follow (<declaration>): { <endl>, elf, endwhile , endfun, else, endif, <- }
+Follow (<assignment>): { <endl>, elf, endwhile , endfun, else, endif } 
+Follow(<catassign>): {<endl>, elf, endwhile, endfun, else, endif}
+Follow (<conditional>): { <endl>, elf, endwhile , endfun, else, endif } 
+Follow (<elfears>): { endif }
+Follow (<topexpression>): {<endl>, elf, endwhile , endfun, else, endif, )}
+Follow (<expressionlist>): {<endl>, elf, endwhile , endfun, else, endif, )}
+Follow (<expression>): { ) , -, + , *, / , %, < ,>, <=, >=, =, !=, AND, OR,<endl>, elf, endwhile , endfun, else, endif } 
+
+Follow (<funcall>): {) , -, + , *, / , %, < ,>, <=, >=, =, !=, AND, OR, $ ,<endl>, elf, endwhile , endfun, else, endif }
+Follow (<fop>): { <digit> , <letter> , NOT , (, true, false } 
+
+Follow(<sop>): {<digit> , <letter> , NOT , (, true, false }
+Follow (<literals>): { ) , -, + , *, / , %, < ,>, <=, >=, =, !=, AND, OR, $ ,<endl>, elf, endwhile , endfun, else, endif } 
+Follow (<ident>): { ( , <comma> , ),  <endl>, elf, endwhile , endfun, $, else, endif, ← } 
+Follow (<type>): { <endl>, <ident> } 
+------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------
+Predict (<program> -> <top_lvl_stmt>):  { <fun> }
+Predict (<top_lvl_stmts> -> <top_lvl_stmt> <endl> <top_lvl_stmt>): { <fun> }
+Predict (<top_lvl_stmts> -> λ): { <$> }
+Predict (<top_lvl_stmt> -> fun <ident> (<params>) as <type> \n <stmts> endfun): { <fun> }
+Predict (<params> -> <param> <paramlist>): { <in>, <boo>, <big>, <small> }
+Predict (<params> -> λ): { <r_paren> }
+Predict (<paramlist>-> <comma> <params>){<comma>}
+Predict (<paramlist>-> λ ): { <r_paren> }
+Predict (<param> -> <type> <ident>): { <in>, <boo>, <big>, <small> }
+Predict (<stmts> -> <stmt> <morestmts>): { <if>, <while>, <ident>, <in>, <boo>, <big>, <small> ,<digit>,<true>, <false>, <NOT>, <l_paren>, <toss> }
+Predict (<morestmts> -> <endl> <stmts>): { <endl>}
+Predict (<morestmts> -> λ): {elf, endwhile , endfun, else, endif }
+Predict (<stmt> -> <conditional>): { if, while }
+Predict (<stmt> -> λ ): {  <endl>, elf, endwhile , endfun, else, endif }
+Predict (<stmt> -> toss <expression>): { toss }
+Predict (<stmt> -> <varhandler>): { <ident>, in, boo, big, small }
+Predict (<varhandler> -> <ident> <assignment>): { <ident>}
+Predict (<varhandler> -> <declaration> <catassign>): { in, boo, big, small }
+Predict (<declaration> -> <type> <ident>): { in, boo, big, small  }
+Predict (<assignment> -> <assign_op> <toplevelexpression> ): { <assign_op> }
+Predict (<catassign>   -> <assignment> ): { <assign_op> }
+Predict (<catassign>   -> λ ): { <endl>, elf, endwhile, endfun, else, endif}
+Predict (<conditional>  -> if (<toplevelexpression>) <endl> <stmts> <elfears> endif): { <if> }
+Predict (<conditional>  -> while (<expression>) \n <stmts> endwhile): { while }
+Predict (<elfears> -> elf( <expression> ) <stmts> <elfears> ): { elf }
+Predict (<elfears> -> else <stmts> ): { else }
+Predict (<elfears> -> λ ): { <endif> }
+Predict (<topexpression> -> <expression><expressionlist>): { <ident>, <digit>, <NOT> }
+Predict (<topexpression> -> (<expression><expressionlist>) <expressionlist>):{ <r_paren> }
+Predict (<expressionlist>  -> <sop> <topexpression>): { +, -,*,/,%,<,>,<=,>=,=,!=,AND,OR  }
+Predict (<expressionlist > -> λ ): { <endl>, elf, endwhile , endfun, else, endif, <r_paren> }
+Predict (<expression> -> <ident> <funcall>): { <ident> }
+Predict (<expression> -> <literals>): { <literal>, <true>, <false> }
+Predict (<expression> -> NOT (<topexpression>)): { NOT }
+Predict ( <funcall> -> ( <params> ) ): { (  }
+Predict ( <funcall> -> λ ): {) , -, + , *, / , %, < ,>, <=, >=, =, !=, AND, OR,<endl>, elf, endwhile , endfun, else, endif }
+Predict (<sop>-> +): { + }
+Predict (<sop>-> -): { - }
+Predict (<fop>-> *): { * }
+Predict (<fop>-> /): { / }
+Predict (<fop>-> %): { % }
+Predict (<fop>-> <): { < }
+Predict (<fop>-> >): { > }
+Predict (<fop>-> <=): { <= }
+Predict (<fop>-> >=): { >= }
+Predict (<fop>-> =): { = }
+Predict (<fop>-> !=): { != }
+Predict (<fop>-> AND): { AND }
+Predict (<fop>-> OR): { OR }
+Predict (<literals> -> <literal>): { <literal> }
+Predict (<literals> -> true): { true }
+Predict (<literals> -> false): { false }
+Predict (<type> -> in): { in }
+Predict (<type > -> boo): { boo }
+Predict (<type> -> big): { big }
+Predict (<type > -> small): { small }
+
+
+
+
+
+
+
+
