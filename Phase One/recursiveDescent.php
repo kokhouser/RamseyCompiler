@@ -141,6 +141,8 @@
                 $this->varhandler();
                 $this->pushLookahead();
             }
+            else{
+		        return "error: expected token <if>, <while>, <ident>, <type>, <literal>, or <not_op> on line ".$lineNum."\n";
 
         }
 	}
