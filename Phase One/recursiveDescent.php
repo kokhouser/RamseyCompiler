@@ -85,7 +85,7 @@
 	        if($this->lookahead== "<comma>"){
 		        //match <comma>
 		        $this->pushLookahead();
-		        $this->param();
+		        $this->params();
 		        $this->pushLookahead();
             }
 		}
