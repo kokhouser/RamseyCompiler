@@ -81,8 +81,9 @@
 		}
 		
 		private function params(){
-		    if($this->lookahead=="in"||$this->lookahead=="boo"||$this->lookahead=="big"||$this->lookahead=="small"){
-		        $this->param();
+		    if($this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"
+		    	||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>" ){
+		    	$this->param();
 		        $this->pushLookahead();
 		        $this->paramlist();
 		        $this->pushLookahead();
@@ -103,7 +104,8 @@
 		}
         
         private function param(){
-		    if($this->lookahead=="in"||$this->lookahead=="boo"||$this->lookahead=="big"||$this->lookahead=="small" ){
+		    if($this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"
+		    	||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>" ){
 		        $this->type();
 		        $this->pushLookahead();
 		        $this->ident();
@@ -115,7 +117,7 @@
 		}
         
         private function stmts(){
-		    if($this->lookahead=="if"||$this->lookahead=="while"||$this->lookahead=="<letter>"||$this->lookahead=="in"||$this->lookahead=="boo"||$this->lookahead=="big"||$this->lookahead=="small"|$this->lookahead=="<digit>"||$this->lookahead=="true"||$this->lookahead=="false"||$this->lookahead=="NOT" ){
+		    if($this->lookahead=="<if>"||$this->lookahead=="<while>"||$this->lookahead=="<ident>"||$this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"|$this->lookahead=="<literal>"||$this->lookahead=="true"||$this->lookahead=="false"||$this->lookahead=="NOT" ){
 		        $this->stmt();
 		        $this->pushLookahead();
 		    }
