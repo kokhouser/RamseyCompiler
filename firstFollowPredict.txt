@@ -82,7 +82,7 @@ Predict (<elfears> -> elf( <expression> ) <stmts> <elfears> ): { elf }
 Predict (<elfears> -> else <stmts> ): { else }
 Predict (<elfears> -> λ ): { <endif> }
 Predict (<topexpression> -> <expression><expressionlist>): { <ident>, <digit>, <NOT> }
-Predict (<topexpression> -> (<expression><expressionlist>) <expressionlist>):{ <r_paren> }
+Predict (<topexpression> -> (<expression><expressionlist>) <expressionlist>):{ <l_paren> }
 Predict (<expressionlist>  -> <sop> <topexpression>): { +, -,*,/,%,<,>,<=,>=,=,!=,AND,OR  }
 Predict (<expressionlist > -> λ ): { <endl>, elf, endwhile , endfun, else, endif, <r_paren> }
 Predict (<expression> -> <ident> <funcall>): { <ident> }
