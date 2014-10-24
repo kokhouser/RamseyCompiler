@@ -77,6 +77,13 @@
 		    	$this->param();
 		        $this->paramlist();
             }
+            // Is the following "if" block correct? Is this how we handle going to lambda?
+            else if ($this->lookahead=="<rparen>"){
+                $this->pushLookahead();
+            }
+            else{
+                return "error:expected token <type> or <rparen> on line ".$lineNum. "\n";
+            }
 		}
         
         private function paramlist(){
@@ -84,6 +91,13 @@
 		        //match <comma>
 		        $this->pushLookahead();
 		        $this->params();
+            }
+            // Is the following "if" block correct? Is this how we handle going to lambda?
+            else if($this->lookahead=="<rparen>"){
+                $this->pushLookahead();
+            }
+            else{
+                return "error:expected token <comma> or <rparen> on line ".$lineNum. "\n";
             }
 		}
         
@@ -114,8 +128,17 @@
 		    if ($this->lookahead=="<endl>"){
 		        //match <endl>
 		        $this->pushLookahead();
+		        $this->lineNum+=1;
 		        $this->stmts();
 		    }
+		    // Is the following "if" block correct? Is this how we handle going to lambda?
+		    else if ($this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"||$this->lookahead=="<else>"
+		    ||$this->lookahead=="<endif>"){
+		        $this->pushLookahead();
+		    }
+		    else{
+                return "error:expected token <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$lineNum. "\n";
+            }
 		}
 
         private function stmt(){
@@ -127,8 +150,18 @@
                 $this->pushLookahead();
                 $this->expression();
             }
-            else if ($this->lookahead=="<ident>"||$this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"){
+            else if ($this->lookahead=="<ident>"||$this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"
+            ||$this->lookahead=="<small_type>"){
                 $this->varhandler();
+            }
+            // Is the following "if" block correct? Is this how we handle going to lambda?
+            else if ($this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"
+            ||$this->lookahead=="<else>"||$this->lookahead=="<endif>"){
+                //Is the following correct??
+                if ($this->lookahead=="<endl>"){
+                    $this->lineNum+=1;
+                }
+                $this->pushLookahead();
             }
             else{
 		        return "error: expected token <if>, <while>, <ident>, <type>, <literal>, or <not_op> on line ".$lineNum."\n";
@@ -140,10 +173,121 @@
             if ($this->lookahead=="<ident>"){
                 //match <ident>
                 $this->pushLookahead();
+                $this->assignment();
+            }
+            else if ($this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"){
+                $this->declaration();
+                $this->catassign();
+            }
+            else{
+                return "error: expected token <identifier> or <type> on line ".$lineNum. "\n";
             }
         }
         
+        private function declaration(){
+            if ($this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"){
+                $this->type();
+                //match <ident>
+                $this->pushLookahead();
+            }
+            else{
+                return "error: expected token <type> on line ".$lineNum. "\n";
+            }
+        }
         
+        private function assignment(){
+            if ($this->lookahead=="<assign_op>"){
+                //match <assign_op>
+                $this->pushLookahead();
+                $this->topexpression();
+            }
+            else{
+                return "error: expected token <assign_op> on line ".$lineNum. "\n";
+            }
+        }
+        
+        private function catassign(){
+            if ($this->lookahead=="<assign_op>"){
+                $this->assignment();
+            }
+            //Is the following if block correct?
+            else if ($this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"||$this->lookahead=="<else>"
+            ||$this->lookahead=="<endif>"){
+                //Is the following correct??
+                if ($this->lookahead=="<endl>"){
+                    $this->lineNum+=1;
+                }
+                $this->pushLookahead();
+            }
+            else{
+                return "error:expected token <assign_op>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$lineNum. "\n";
+            }
+        }
+        
+        private function conditional(){
+            if ($this->lookahead=="<if>"){
+                //match <if>
+                $this->pushLookahead();
+                //match <lparen>
+                $this->pushLookahead();
+                $this->topexpression();
+                //match <rparen>
+                $this->pushLookahead();
+                //match <endl>
+                $this->pushLookahead();
+                $this->lineNum+=1;
+                $this->stmts();
+                $this->elfears();
+                //match <endif>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<while>"){
+                //match <while>
+                $this->pushLookahead();
+                //match <lparen>
+                $this->pushLookahead();
+                $this->expression();
+                //match <rparen>
+                $this->pushLookahead();
+                //match <endl>
+                $this->pushLookahead();
+                $this->lineNum+=1;
+                $this->stmts();
+                //match <endwhile>
+                $this->pushLookahead();
+            }
+            else{
+                return "error:expected token <if> or <while> on line ".$lineNum. "\n";
+            }
+        }
+        
+        private function elfears(){
+            if ($this->lookahead=="<elf>"){
+                //match <elf>
+                $this->pushLookahead();
+                //match <lparen>
+                $this->pushLookahead();
+                $this->expression();
+                //match <rparen>
+                $this->pushLookahead();
+                $this->stmts();
+                $this->elfears();
+                //match <rparen>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<else>"){
+                //match <else>
+                $this->pushLookahead();
+                $this->stmts();
+            }
+            //Is the following "if" block correct? Is this how we're handling lamdas?
+            else if ($this->lookahead=="<endif>"){
+                $this->pushLookahead();
+            }
+            else{
+                return "error:expected token <elf> or <else> on line ".$lineNum. "\n";
+            }
+        }
 	}
 
 ?>
