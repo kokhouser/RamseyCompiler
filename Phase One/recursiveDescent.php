@@ -475,6 +475,7 @@
                 $this->pushLookahead();
             }
         }
+        //Done!
 	}
 
 ?>
