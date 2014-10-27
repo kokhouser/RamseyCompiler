@@ -369,6 +369,112 @@
                 return "error:expected token <lparen>, <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$lineNum. "\n";
             }
         }
+        
+        private function sop(){
+            if ($this->lookahead=="<add_op>"){
+                //match <add_op>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<sub_op>"){
+                //match <sub_op>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<mult_op>"||$this->lookahead=="div_op"||$this->lookahead=="<mod_op>"||$this->lookahead=="<less_op>"
+            ||$this->lookahead=="<greater_op>"||$this->lookahead=="lesseq_op"||$this->lookahead=="<greateq_op>"||$this->lookahead=="<noteq_op>"
+            ||$this->lookahead=="<and_op>"||$this->lookahead=="<or_op>"||$this->lookahead=="<compare_op>"){
+                $this->fop();
+            }
+            else {
+                return "error:expected token <operator> on line ".$lineNum. "\n";
+            }
+        }
+        
+        private function fop(){
+            if ($this->lookahead=="<mult_op>"){
+                //match <mult_op>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<div_op>"){
+                //match <div_op>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<mod_op>"){
+                //match <mod_op>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<less_op>"){
+                //match <less_op>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<greater_op>"){
+                //match <greater_op>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<lesseq_op>"){
+                //match <lesseq_op>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<greateq_op>"){
+                //match <greateq_op>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<noteq_op>"){
+                //match <noteq_op>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<and_op>"){
+                //match <and_op>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<or_op>"){
+                //match <or_op>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<compare_op>"){
+                //match <compare_op>
+                $this->pushLookahead();
+            }
+            else{
+                return "error:expected token <operator> on line ".$lineNum. "\n";
+            }
+        }
+        
+        private function literals(){
+            if ($this->lookahead=="<literal>"){
+                //match <literal>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<true>"){
+                //match <true>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<false>"){
+                //match <false>
+                $this->pushLookahead();
+            }
+            else{
+                return "error:expected token <literal>, <true> or <false> on line ".$lineNum. "\n";
+            }
+        }
+        
+        private function type(){
+            if ($this->lookahead=="<in_type>"){
+                //match <in_type>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<boo_type>"){
+                //match <boo_type>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<big_type>"){
+                //match <big_type>
+                $this->pushLookahead();
+            }
+            else if ($this->lookahead=="<small_type>"){
+                //match <small_type>
+                $this->pushLookahead();
+            }
+        }
 	}
 
 ?>
