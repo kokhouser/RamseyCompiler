@@ -83,7 +83,7 @@
             }
             // Is the following "if" block correct? Is this how we handle going to lambda?
             else if ($this->lookahead=="<r_paren>"){
-                $this->pushLookahead();
+                //$this->pushLookahead();
             }
             else{
                 echo "error:expected token <type> or <r_paren> on line ".$this->lineNum. "\n";
@@ -98,7 +98,7 @@
             }
             // Is the following "if" block correct? Is this how we handle going to lambda?
             else if($this->lookahead=="<r_paren>"){
-                $this->pushLookahead();
+                //$this->pushLookahead();
             }
             else{
                 echo "error:expected token <comma> or <r_paren> on line ".$this->lineNum. "\n";
@@ -139,7 +139,7 @@
 		    // Is the following "if" block correct? Is this how we handle going to lambda?
 		    else if ($this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"||$this->lookahead=="<else>"
 		    ||$this->lookahead=="<endif>"){
-		        $this->pushLookahead();
+		        //$this->pushLookahead();
 		    }
 		    else{
                 echo "error:expected token <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$this->lineNum. "\n";
@@ -165,8 +165,8 @@
                 //Is the following correct??
                 if ($this->lookahead=="<endl>"){
                     $this->lineNum+=1;
+                    $this->pushLookahead();
                 }
-                $this->pushLookahead();
             }
             else{
 		        echo "error: expected token <if>, <while>, <ident>, <type>, <literal>, or <not_op> on line ".$this->lineNum."\n";
@@ -224,8 +224,8 @@
                 //Is the following correct??
                 if ($this->lookahead=="<endl>"){
                     $this->lineNum+=1;
+                    $this->pushLookahead();
                 }
-                $this->pushLookahead();
             }
             else{
                 echo "error:expected token <assign_op>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$this->lineNum. "\n";
@@ -290,7 +290,7 @@
             }
             //Is the following "if" block correct? Is this how we're handling lamdas?
             else if ($this->lookahead=="<endif>"){
-                $this->pushLookahead();
+                //$this->pushLookahead();
             }
             else{
                 echo "error:expected token <elf> or <else> on line ".$this->lineNum. "\n";
@@ -299,7 +299,6 @@
         
         private function topexpression(){
             if ($this->lookahead=="<ident>"||$this->lookahead=="<literal>"||$this->lookahead=="<true>"||$this->lookahead=="<false>"||$this->lookahead=="<not_op>"){
-                echo "Here \n";
                 $this->expression();
                 $this->expressionlist();
             }
@@ -328,11 +327,10 @@
             //Is the following "if" block correct? Is this how we're handling lamdas?
             else if ($this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"
                 ||$this->lookahead=="<else>"||$this->lookahead=="<endif>"||$this->lookahead=="<r_paren>"){
-                $this->pushLookahead();
+                //$this->pushLookahead();
             }
             else{
                 echo "error:expected token <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else>, <endif> or <r_paren> on line ".$this->lineNum. "\n";
-		echo $this->lookahead."\n";
             }
         }
         
@@ -373,7 +371,7 @@
                 ||$this->lookahead=="<greateq_op>"||$this->lookahead=="<noteq_op>"||$this->lookahead=="<and_op>"||$this->lookahead=="<or_op>"
                 ||$this->lookahead=="<compare_op>"||$this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"
                 ||$this->lookahead=="<endfun>"||$this->lookahead=="<else>"||$this->lookahead=="<endif>"){
-                $this->pushLookahead();
+                //$this->pushLookahead();
             }
             else{
                 echo "error:expected token <lparen>, <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$this->lineNum. "\n";

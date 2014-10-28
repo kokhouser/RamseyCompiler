@@ -11,7 +11,7 @@
 <l_paren>
 <ident>
 <compare_op>
-<ident>
+<literal>
 <r_paren>
 <endl>
 <toss>
