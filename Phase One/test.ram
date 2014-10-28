@@ -11,11 +11,8 @@ fun factorial(in x) as in
 
 endfun
 
-in x
+in x y z
 #give "Enter number to be factorialized."
 #take x
 in y <- factorial(x)
 #give x " factorialized is " y
-true
-false
-not

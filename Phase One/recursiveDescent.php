@@ -26,6 +26,9 @@
 			if($this->lookahead=="<fun>"){
 				$this->toplvlstmts();
 			}
+			else{
+				echo "Expected token <fun> on line ".$this->lineNum. "\n";
+			}
 		}
 
 		private function toplvlstmts(){
