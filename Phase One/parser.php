@@ -1,6 +1,6 @@
 <?php
 
-	require(recursiveDescent.php);
+	require("recursiveDescent.php");
 
 	$filename = "token.txt";
 	$input = file_get_contents($filename);
