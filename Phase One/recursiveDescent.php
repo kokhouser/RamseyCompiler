@@ -10,12 +10,12 @@
 			$this->tokens = $arr;
 			$this->index = 0;
 			$this->lineNum = 1;
-			$this->lookahead = $tokens[$index];
+			$this->lookahead = $this->tokens[$this->index];
 		}
 
 		private function pushLookahead(){
 			$this->index+=1;
-			$this->lookahead=$tokens[$index];
+			$this->lookahead=$this->tokens[$this->index];
 		}
 
 		public function parse(){
@@ -50,7 +50,8 @@
 			if($this->lookahead=="<fun>"){
 				//match <fun>
 				$this->pushLookahead();
-				$this->ident();
+				//match <ident>
+				$this->pushLookahead();
 				//match <l_paren>
 				$this->pushLookahead();
 				$this->params();
@@ -105,7 +106,8 @@
 		    if($this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"
 		    	||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>" ){
 		        $this->type();
-		        $this->ident();
+		        //match <ident>
+			$this->pushLookahead();
 		    }
 		    else{
 		        return "error: expected token <type> on line ".$lineNum."\n";
