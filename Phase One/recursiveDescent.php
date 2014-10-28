@@ -37,7 +37,7 @@
 
 				//match endl
 				$this->lineNum+=1;	//this may be the only affect of matching endl
-				
+				//$this->pushLookahead();
 				$this->toplvlstmts();
 			}
 			else if(is_null($this->lookahead)){ 	//do we want to append end of input token to end of stream to be used instead of null? (I think we should!)
@@ -77,7 +77,8 @@
 		
 		private function params(){
 		    if($this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"
-		    	||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>" ){
+		    	||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"
+                ||$this->lookahead=="<ident>" ){
 		    	$this->param();
 		        $this->paramlist();
             }
@@ -110,17 +111,22 @@
 		    	||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>" ){
 		        $this->type();
 		        //match <ident>
-			$this->pushLookahead();
+			    $this->pushLookahead();
 		    }
+            else if ($this->lookahead=="<literal>"||$this->lookahead=="<ident>"||$this->lookahead=="<true>"||$this->lookahead=="<false>"||$this->lookahead=="<not_op>"||$this->lookahead=="<l_paren>"){
+                $this->topexpression();
+            }
 		    else{
-		        echo "error: expected token <type> on line ".$this->lineNum."\n";
+		        echo "error: expected token <type>, <literal>, <ident>, <true>, <false>, or <l_paren> on line ".$this->lineNum."\n";
 		    }
 		}
         
         private function stmts(){
 		    if($this->lookahead=="<if>"||$this->lookahead=="<while>"||$this->lookahead=="<ident>"||$this->lookahead=="<in_type>"
 		    ||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"|$this->lookahead=="<literal>"
-		    ||$this->lookahead=="<true>"||$this->lookahead=="<false>"||$this->lookahead=="<not_op>"||$this->lookahead=="<toss>" ){
+		    ||$this->lookahead=="<true>"||$this->lookahead=="<false>"||$this->lookahead=="<not_op>"||$this->lookahead=="<toss>"
+            ||$this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"
+            ||$this->lookahead=="<else>"||$this->lookahead=="<endif>" ){
 		        $this->stmt();
 		        $this->morestmts();
 		    }
@@ -153,7 +159,7 @@
             else if ($this->lookahead=="<toss>"){
                 //match <toss>
                 $this->pushLookahead();
-                $this->expression();
+                $this->topexpression();
             }
             else if ($this->lookahead=="<ident>"||$this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"
             ||$this->lookahead=="<small_type>"/*||$this->lookahead=="<literal>"*/){
@@ -162,11 +168,11 @@
             // Is the following "if" block correct? Is this how we handle going to lambda?
             else if ($this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"
             ||$this->lookahead=="<else>"||$this->lookahead=="<endif>"){
-                //Is the following correct??
+                /*Is the following correct??
                 if ($this->lookahead=="<endl>"){
                     $this->lineNum+=1;
-                    $this->pushLookahead();
-                }
+                    //$this->pushLookahead();
+                }*/
             }
             else{
 		        echo "error: expected token <if>, <while>, <ident>, <type>, <literal>, or <not_op> on line ".$this->lineNum."\n";
@@ -221,11 +227,11 @@
             //Is the following if block correct?
             else if ($this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"||$this->lookahead=="<else>"
             ||$this->lookahead=="<endif>"){
-                //Is the following correct??
+                /*Is the following correct??
                 if ($this->lookahead=="<endl>"){
                     $this->lineNum+=1;
                     $this->pushLookahead();
-                }
+                }*/
             }
             else{
                 echo "error:expected token <assign_op>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$this->lineNum. "\n";
@@ -236,7 +242,7 @@
             if ($this->lookahead=="<if>"){
                 //match <if>
                 $this->pushLookahead();
-                //match <lparen>
+                //match <l_paren>
                 $this->pushLookahead();
                 $this->topexpression();
                 //match <r_paren>
@@ -252,7 +258,7 @@
             else if ($this->lookahead=="<while>"){
                 //match <while>
                 $this->pushLookahead();
-                //match <lparen>
+                //match <l_paren>
                 $this->pushLookahead();
                 $this->expression();
                 //match <r_paren>
@@ -273,7 +279,7 @@
             if ($this->lookahead=="<elf>"){
                 //match <elf>
                 $this->pushLookahead();
-                //match <lparen>
+                //match <l_paren>
                 $this->pushLookahead();
                 $this->expression();
                 //match <r_paren>
@@ -302,8 +308,8 @@
                 $this->expression();
                 $this->expressionlist();
             }
-            else if ($this->lookahead=="<lparen>"){
-                //match <lparen>
+            else if ($this->lookahead=="<l_paren>"){
+                //match <l_paren>
                 $this->pushLookahead();
                 $this->expression();
                 $this->expressionlist();
@@ -312,13 +318,13 @@
                 $this->expressionlist();
             }
             else{
-                echo "error:expected token <ident>, <literal>, <true>, <false>, <not_op> or <lparen> on line ".$this->lineNum. "\n";
+                echo "error:expected token <ident>, <literal>, <true>, <false>, <not_op> or <l_paren> on line ".$this->lineNum. "\n";
             }
         }
         
         private function expressionlist(){
-            if ($this->lookahead=="<add_op>"||$this->lookahead=="<sub_op>"||$this->lookahead=="<mult_op>"||$this->lookahead=="div_op"
-                ||$this->lookahead=="<mod_op>"||$this->lookahead=="<less_op>"||$this->lookahead=="<greater_op>"||$this->lookahead=="lesseq_op"
+            if ($this->lookahead=="<add_op>"||$this->lookahead=="<sub_op>"||$this->lookahead=="<mult_op>"||$this->lookahead=="<div_op>"
+                ||$this->lookahead=="<mod_op>"||$this->lookahead=="<less_op>"||$this->lookahead=="<greater_op>"||$this->lookahead=="<lesseq_op>"
                 ||$this->lookahead=="<greateq_op>"||$this->lookahead=="<noteq_op>"||$this->lookahead=="<and_op>"||$this->lookahead=="<or_op>"
                 ||$this->lookahead=="<compare_op>"){
                 $this->sop();
@@ -346,35 +352,37 @@
             else if ($this->lookahead=="<not_op>"){
                 //match <not_op>
                 $this->pushLookahead();
-                //match <lparen>
+                //match <l_paren>
                 $this->pushLookahead();
                 $this->topexpression();
                 //match <r_paren>
                 $this->pushLookahead();
             }
             else{
+                echo $this->lookahead;
                 echo "error:expected token <ident>, <literal>, <true> or <false> on line ".$this->lineNum. "\n";
             }
         }
         
         private function funcall(){
-            if ($this->lookahead=="<lparen>"){
-                //match <lparen>
+            if ($this->lookahead=="<l_paren>"){
+                //match <l_paren>
                 $this->pushLookahead();
                 $this->params();
                 //match <r_paren>
                 $this->pushLookahead();
             }
             //Is the following "if" block correct? Is this how we're handling lamdas?
-            else if ($this->lookahead=="<add_op>"||$this->lookahead=="<sub_op>"||$this->lookahead=="<mult_op>"||$this->lookahead=="div_op"
-                ||$this->lookahead=="<mod_op>"||$this->lookahead=="<less_op>"||$this->lookahead=="<greater_op>"||$this->lookahead=="lesseq_op"
+            else if ($this->lookahead=="<add_op>"||$this->lookahead=="<sub_op>"||$this->lookahead=="<mult_op>"||$this->lookahead=="<div_op>"
+                ||$this->lookahead=="<mod_op>"||$this->lookahead=="<less_op>"||$this->lookahead=="<greater_op>"||$this->lookahead=="<lesseq_op>"
                 ||$this->lookahead=="<greateq_op>"||$this->lookahead=="<noteq_op>"||$this->lookahead=="<and_op>"||$this->lookahead=="<or_op>"
                 ||$this->lookahead=="<compare_op>"||$this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"
                 ||$this->lookahead=="<endfun>"||$this->lookahead=="<else>"||$this->lookahead=="<endif>"){
                 //$this->pushLookahead();
             }
             else{
-                echo "error:expected token <lparen>, <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$this->lineNum. "\n";
+                echo $this->lookahead;
+                echo "error:expected token <l_paren>, <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$this->lineNum. "\n";
             }
         }
         
@@ -387,8 +395,8 @@
                 //match <sub_op>
                 $this->pushLookahead();
             }
-            else if ($this->lookahead=="<mult_op>"||$this->lookahead=="div_op"||$this->lookahead=="<mod_op>"||$this->lookahead=="<less_op>"
-            ||$this->lookahead=="<greater_op>"||$this->lookahead=="lesseq_op"||$this->lookahead=="<greateq_op>"||$this->lookahead=="<noteq_op>"
+            else if ($this->lookahead=="<mult_op>"||$this->lookahead=="<div_op>"||$this->lookahead=="<mod_op>"||$this->lookahead=="<less_op>"
+            ||$this->lookahead=="<greater_op>"||$this->lookahead=="<lesseq_op>"||$this->lookahead=="<greateq_op>"||$this->lookahead=="<noteq_op>"
             ||$this->lookahead=="<and_op>"||$this->lookahead=="<or_op>"||$this->lookahead=="<compare_op>"){
                 $this->fop();
             }

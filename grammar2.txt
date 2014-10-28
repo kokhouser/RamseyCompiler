@@ -10,17 +10,17 @@
 <paramlist>		-> <comma> <params>
 				| ε
 <param>		   	-> <type> <ident>
+				| <topexpression>
 <stmts>		   	-> <stmt> <morestmts>
 <morestmts>		-> <endl> <stmts>
 			    | ε
 
 <stmt>		   	-> <conditional>
 				| ε
-				| toss <expression>
+				| toss <topexpression>
 				| <varhandler>
 <varhandler>  -> <ident> <assignment>
         | <declaration> <catassign>
-        | <topexpression>
 <declaration>		-> <type> <ident>
 <assignment>	-> <- <topexpression>
 <catassign>   -> <assignment>
