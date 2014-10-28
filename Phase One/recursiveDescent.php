@@ -82,11 +82,11 @@
 		        $this->paramlist();
             }
             // Is the following "if" block correct? Is this how we handle going to lambda?
-            else if ($this->lookahead=="<rparen>"){
+            else if ($this->lookahead=="<r_paren>"){
                 $this->pushLookahead();
             }
             else{
-                echo "error:expected token <type> or <rparen> on line ".$this->lineNum. "\n";
+                echo "error:expected token <type> or <r_paren> on line ".$this->lineNum. "\n";
             }
 		}
         
@@ -97,11 +97,11 @@
 		        $this->params();
             }
             // Is the following "if" block correct? Is this how we handle going to lambda?
-            else if($this->lookahead=="<rparen>"){
+            else if($this->lookahead=="<r_paren>"){
                 $this->pushLookahead();
             }
             else{
-                echo "error:expected token <comma> or <rparen> on line ".$this->lineNum. "\n";
+                echo "error:expected token <comma> or <r_paren> on line ".$this->lineNum. "\n";
             }
 		}
         
@@ -156,7 +156,7 @@
                 $this->expression();
             }
             else if ($this->lookahead=="<ident>"||$this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"
-            ||$this->lookahead=="<small_type>"){
+            ||$this->lookahead=="<small_type>"/*||$this->lookahead=="<literal>"*/){
                 $this->varhandler();
             }
             // Is the following "if" block correct? Is this how we handle going to lambda?
@@ -183,7 +183,10 @@
             else if ($this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"){
                 $this->declaration();
                 $this->catassign();
-            }
+            }/* might need this
+            else if ($this->lookahead=="<literal>"){
+                $this -> topexpression();
+            }*/
             else{
                 echo "error: expected token <identifier> or <type> on line ".$this->lineNum. "\n";
             }
@@ -236,7 +239,7 @@
                 //match <lparen>
                 $this->pushLookahead();
                 $this->topexpression();
-                //match <rparen>
+                //match <r_paren>
                 $this->pushLookahead();
                 //match <endl>
                 $this->pushLookahead();
@@ -252,7 +255,7 @@
                 //match <lparen>
                 $this->pushLookahead();
                 $this->expression();
-                //match <rparen>
+                //match <r_paren>
                 $this->pushLookahead();
                 //match <endl>
                 $this->pushLookahead();
@@ -273,11 +276,11 @@
                 //match <lparen>
                 $this->pushLookahead();
                 $this->expression();
-                //match <rparen>
+                //match <r_paren>
                 $this->pushLookahead();
                 $this->stmts();
                 $this->elfears();
-                //match <rparen>
+                //match <r_paren>
                 $this->pushLookahead();
             }
             else if ($this->lookahead=="<else>"){
@@ -296,6 +299,7 @@
         
         private function topexpression(){
             if ($this->lookahead=="<ident>"||$this->lookahead=="<literal>"||$this->lookahead=="<true>"||$this->lookahead=="<false>"||$this->lookahead=="<not_op>"){
+                echo "Here \n";
                 $this->expression();
                 $this->expressionlist();
             }
@@ -304,7 +308,7 @@
                 $this->pushLookahead();
                 $this->expression();
                 $this->expressionlist();
-                //match <rparen>
+                //match <r_paren>
                 $this->pushLookahead();
                 $this->expressionlist();
             }
@@ -323,11 +327,12 @@
             }
             //Is the following "if" block correct? Is this how we're handling lamdas?
             else if ($this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"
-                ||$this->lookahead=="<else>"||$this->lookahead=="<endif>"||$this->lookahead=="<rparen>"){
+                ||$this->lookahead=="<else>"||$this->lookahead=="<endif>"||$this->lookahead=="<r_paren>"){
                 $this->pushLookahead();
             }
             else{
-                echo "error:expected token <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else>, <endif> or <rparen> on line ".$this->lineNum. "\n";
+                echo "error:expected token <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else>, <endif> or <r_paren> on line ".$this->lineNum. "\n";
+		echo $this->lookahead."\n";
             }
         }
         
@@ -346,7 +351,7 @@
                 //match <lparen>
                 $this->pushLookahead();
                 $this->topexpression();
-                //match <rparen>
+                //match <r_paren>
                 $this->pushLookahead();
             }
             else{
@@ -359,7 +364,7 @@
                 //match <lparen>
                 $this->pushLookahead();
                 $this->params();
-                //match <rparen>
+                //match <r_paren>
                 $this->pushLookahead();
             }
             //Is the following "if" block correct? Is this how we're handling lamdas?

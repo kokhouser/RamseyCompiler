@@ -20,6 +20,7 @@
 				| <varhandler>
 <varhandler>  -> <ident> <assignment>
         | <declaration> <catassign>
+        | <topexpression>
 <declaration>		-> <type> <ident>
 <assignment>	-> <- <topexpression>
 <catassign>   -> <assignment>
