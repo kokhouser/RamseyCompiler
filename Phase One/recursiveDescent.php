@@ -68,7 +68,7 @@
 				$this->pushLookahead();
 			}
 			else{
-				return "error: expected token <fun> on line ".$lineNum."\n";
+				return "error: expected token <fun> on line ".$this->lineNum."\n";
 			}
 		}
 		
@@ -83,7 +83,7 @@
                 $this->pushLookahead();
             }
             else{
-                return "error:expected token <type> or <rparen> on line ".$lineNum. "\n";
+                return "error:expected token <type> or <rparen> on line ".$this->lineNum. "\n";
             }
 		}
         
@@ -98,7 +98,7 @@
                 $this->pushLookahead();
             }
             else{
-                return "error:expected token <comma> or <rparen> on line ".$lineNum. "\n";
+                return "error:expected token <comma> or <rparen> on line ".$this->lineNum. "\n";
             }
 		}
         
@@ -110,7 +110,7 @@
 			$this->pushLookahead();
 		    }
 		    else{
-		        return "error: expected token <type> on line ".$lineNum."\n";
+		        return "error: expected token <type> on line ".$this->lineNum."\n";
 		    }
 		}
         
@@ -122,7 +122,7 @@
 		        $this->morestmts();
 		    }
 		    else{
-		        return "error: expected token <if>, <while>, <ident>, <type>, <literal>, or <not_op> on line ".$lineNum."\n";
+		        return "error: expected token <if>, <while>, <ident>, <type>, <literal>, or <not_op> on line ".$this->lineNum."\n";
 		    }
 		}
 		
@@ -139,7 +139,7 @@
 		        $this->pushLookahead();
 		    }
 		    else{
-                return "error:expected token <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$lineNum. "\n";
+                return "error:expected token <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$this->lineNum. "\n";
             }
 		}
 
@@ -166,7 +166,7 @@
                 $this->pushLookahead();
             }
             else{
-		        return "error: expected token <if>, <while>, <ident>, <type>, <literal>, or <not_op> on line ".$lineNum."\n";
+		        return "error: expected token <if>, <while>, <ident>, <type>, <literal>, or <not_op> on line ".$this->lineNum."\n";
             }
 
         }
@@ -182,7 +182,7 @@
                 $this->catassign();
             }
             else{
-                return "error: expected token <identifier> or <type> on line ".$lineNum. "\n";
+                return "error: expected token <identifier> or <type> on line ".$this->lineNum. "\n";
             }
         }
         
@@ -193,7 +193,7 @@
                 $this->pushLookahead();
             }
             else{
-                return "error: expected token <type> on line ".$lineNum. "\n";
+                return "error: expected token <type> on line ".$this->lineNum. "\n";
             }
         }
         
@@ -204,7 +204,7 @@
                 $this->topexpression();
             }
             else{
-                return "error: expected token <assign_op> on line ".$lineNum. "\n";
+                return "error: expected token <assign_op> on line ".$this->lineNum. "\n";
             }
         }
         
@@ -222,7 +222,7 @@
                 $this->pushLookahead();
             }
             else{
-                return "error:expected token <assign_op>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$lineNum. "\n";
+                return "error:expected token <assign_op>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$this->lineNum. "\n";
             }
         }
         
@@ -259,7 +259,7 @@
                 $this->pushLookahead();
             }
             else{
-                return "error:expected token <if> or <while> on line ".$lineNum. "\n";
+                return "error:expected token <if> or <while> on line ".$this->lineNum. "\n";
             }
         }
         
@@ -287,7 +287,7 @@
                 $this->pushLookahead();
             }
             else{
-                return "error:expected token <elf> or <else> on line ".$lineNum. "\n";
+                return "error:expected token <elf> or <else> on line ".$this->lineNum. "\n";
             }
         }
         
@@ -306,7 +306,7 @@
                 $this->expressionlist();
             }
             else{
-                return "error:expected token <ident>, <literal>, <true>, <false>, <not_op> or <lparen> on line ".$lineNum. "\n";
+                return "error:expected token <ident>, <literal>, <true>, <false>, <not_op> or <lparen> on line ".$this->lineNum. "\n";
             }
         }
         
@@ -324,7 +324,7 @@
                 $this->pushLookahead();
             }
             else{
-                return "error:expected token <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else>, <endif> or <rparen> on line ".$lineNum. "\n";
+                return "error:expected token <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else>, <endif> or <rparen> on line ".$this->lineNum. "\n";
             }
         }
         
@@ -347,7 +347,7 @@
                 $this->pushLookahead();
             }
             else{
-                return "error:expected token <ident>, <literal>, <true> or <false> on line ".$lineNum. "\n";
+                return "error:expected token <ident>, <literal>, <true> or <false> on line ".$this->lineNum. "\n";
             }
         }
         
@@ -368,7 +368,7 @@
                 $this->pushLookahead();
             }
             else{
-                return "error:expected token <lparen>, <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$lineNum. "\n";
+                return "error:expected token <lparen>, <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$this->lineNum. "\n";
             }
         }
         
@@ -387,7 +387,7 @@
                 $this->fop();
             }
             else {
-                return "error:expected token <operator> on line ".$lineNum. "\n";
+                return "error:expected token <operator> on line ".$this->lineNum. "\n";
             }
         }
         
@@ -437,7 +437,7 @@
                 $this->pushLookahead();
             }
             else{
-                return "error:expected token <operator> on line ".$lineNum. "\n";
+                return "error:expected token <operator> on line ".$this->lineNum. "\n";
             }
         }
         
@@ -455,7 +455,7 @@
                 $this->pushLookahead();
             }
             else{
-                return "error:expected token <literal>, <true> or <false> on line ".$lineNum. "\n";
+                return "error:expected token <literal>, <true> or <false> on line ".$this->lineNum. "\n";
             }
         }
         
