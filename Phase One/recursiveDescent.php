@@ -361,7 +361,7 @@
                 $this->pushLookahead();
             }
             else{
-                echo $this->lookahead; //(I don't think we need lookahead here)
+                //echo $this->lookahead; //(I don't think we need lookahead here)
                 echo "error:expected token <ident>, <literal>, <true> or <false> on line ".$this->lineNum. "\n";
             }
         }
@@ -383,7 +383,7 @@
                 //$this->pushLookahead();
             }
             else{
-                echo $this->lookahead;//(I don't think we need lookahead here)
+                //echo $this->lookahead;//(I don't think we need lookahead here)
                 echo "error:expected token <l_paren>, <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$this->lineNum. "\n";
             }
         }
