@@ -39,6 +39,9 @@
 				$this->lineNum+=1;	//this may be the only affect of matching endl
 				//$this->pushLookahead();
 				$this->toplvlstmts();
+                if (!(is_null($this->lookahead))){
+                    echo "Code on line ".$this->lineNum." not in functions!\n";
+                }
 			}
 			else if(is_null($this->lookahead)){ 	//do we want to append end of input token to end of stream to be used instead of null? (I think we should!)
 				return NULL;

@@ -35,8 +35,6 @@
 <endl>
 <endfun>
 <endl>
-<endfun>
-<endl>
 <in_type>
 <ident>
 <endl>
