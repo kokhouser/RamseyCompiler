@@ -84,7 +84,8 @@
             }
             // Is the following "if" block correct? Is this how we handle going to lambda?
             else if ($this->lookahead=="<r_paren>"){
-                //$this->pushLookahead();
+                //match <r_paren>
+                $this->pushLookahead();
             }
             else{
                 echo "error:expected token <type> or <r_paren> on line ".$this->lineNum. "\n";
@@ -99,7 +100,8 @@
             }
             // Is the following "if" block correct? Is this how we handle going to lambda?
             else if($this->lookahead=="<r_paren>"){
-                //$this->pushLookahead();
+                //match <r_paren>
+                $this->pushLookahead();
             }
             else{
                 echo "error:expected token <comma> or <r_paren> on line ".$this->lineNum. "\n";
