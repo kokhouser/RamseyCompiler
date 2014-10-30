@@ -48,7 +48,7 @@
 				exit("Error on line ".$this->lineNum.", expected token ".$matchTo."\n");
 			}
 			else{
-				//echo("I matched a ".$matchTo." on line ".$this->lineNum."\n");
+				echo("I matched a ".$matchTo." on line ".$this->lineNum."\n");
 				if($matchTo=="<endl>"){
 					$this->lineNum+=1;
 				}
@@ -60,6 +60,7 @@
 
 		public function parse(){
 			$this->program();
+			echo("parsing completed successfully! Good job at writing Ramsey!\n");
 		}
 
 		private function program(){
@@ -69,8 +70,8 @@
 		}
 
 		private function toplvlstmts(){
-			$case=$this->matchNT(array("<fun>", "<$>"));
-			if($case==0){
+			$case=$this->matchNT(array("<fun>","<endl>", "<$>"));
+			if($case>=0&&$case<=1){
 			$this->toplvlstmt();
 			$this->match("<endl>");
 			$this->toplvlstmts();
@@ -82,7 +83,7 @@
 		}
 
 		private function toplvlstmt(){
-			$case=$this->matchNT(array("<fun>"));
+			$case=$this->matchNT(array("<fun>", "<endl>"));
 			if($case==0){
 				$this->match("<fun>");
 				$this->match("<ident>");
@@ -94,6 +95,9 @@
 				$this->match("<endl>");
 				$this->stmts();
 				$this->match("<endfun>");
+			}
+			else if($case==1){
+				//do nothing
 			}
 		}
 		

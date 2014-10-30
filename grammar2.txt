@@ -5,6 +5,7 @@
 <top_lvl_stmts> 	-> <top_lvl_stmt> <endl> <top_lvl_stmts>
 				| ε
 <top_lvl_stmt>		-> fun <ident> (<params>) as <type> <endl> <stmts> endfun
+				| ε
 <params>	   	-> <param> <paramlist>
 			   	| ε
 <paramlist>		-> <comma> <params>

@@ -324,10 +324,10 @@
 		}
 		//$tokenStream.="\n";
 		$lineNumber++;
-		if ($multiendl == false){
+	//	if ($multiendl == false){
 		  $tokenStream.="<endl>\n";
-		  $multiendl = true;
-		}
+	//	  $multiendl = true;
+	//	}
 	} //end foreach line
 	if($lexingError!=""){
 		echo $lexingError;

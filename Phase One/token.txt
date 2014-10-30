@@ -7,6 +7,8 @@
 <as>
 <boo_type>
 <endl>
+<endl>
+<endl>
 <ident>
 <assign_op>
 <ident>
@@ -31,6 +33,9 @@
 <div_op>
 <literal>
 <endl>
+<endl>
+<endl>
+<endl>
 <if>
 <l_paren>
 <ident>
@@ -45,10 +50,13 @@
 <endl>
 <endif>
 <endl>
+<endl>
 <toss>
 <literal>
 <endl>
+<endl>
 <endfun>
+<endl>
 <endl>
 <in_type>
 <ident>
@@ -80,11 +88,14 @@
 <endl>
 <endwhile>
 <endl>
+<endl>
 <ident>
 <assign_op>
 <ident>
 <l_paren>
 <ident>
 <r_paren>
+<endl>
+<endl>
 <endl>
 <$>
