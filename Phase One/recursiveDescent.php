@@ -64,9 +64,14 @@
 		}
 
 		private function program(){
-			$this->matchNT(array("<fun>")); //there is only one option in array, so no need to check the location of match in the array
-			$this->toplvlstmts();
-
+			$case=$this->matchNT(array("<fun>", "<endl>")); //there is only one option in array, so no need to check the location of match in the array
+            if($case==0){
+                $this->toplvlstmts();
+            }
+            else if ($case==1){
+                $this->match("<endl>");
+                $this->program();
+            }
 		}
 
 		private function toplvlstmts(){

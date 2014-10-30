@@ -47,6 +47,7 @@
 			$isTokenDone=false;							// since default case checks for identifier and most substrings are valid identifiers, we need to store a token only with the largest string that is an identifier
 			$isWordDone=false;							//is the word finished? more than token can be in a word. bug: variable was not camelcase, meaning conditional below was always not false
 			$isLineDone=false;
+			$isComment=false;
 			$strname = "";
 			for($i=0;$i<$count;$i++){
 				$str=substr($no_space,$start,$length);	//substring to be checked for a token
@@ -61,6 +62,7 @@
 				case "#":								// no comments allowed. no need to check the rest of the line
 					$isWordDone=true;
 					$isLineDone=true;
+					$isComment=true;
 					break;
 				case "(":
 					$token="<l_paren>";
@@ -323,9 +325,11 @@
 			break;
 		}
 		//$tokenStream.="\n";
-		$lineNumber++;
+		if ($isComment!=true){
+			$lineNumber++;
+		}
 	//	if ($multiendl == false){
-		  $tokenStream.="<endl>\n";
+		$tokenStream.="<endl>\n";
 	//	  $multiendl = true;
 	//	}
 	} //end foreach line

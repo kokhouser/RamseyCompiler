@@ -1,5 +1,4 @@
 #Ramsey example program to calculate factorial.
-
 #Recursive function that returns factorial of an integer.
 fun factorial(in x) as in
 

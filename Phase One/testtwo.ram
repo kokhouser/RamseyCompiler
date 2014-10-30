@@ -8,7 +8,7 @@ bar <- bar/2 				#bar will be the same evenness as before
 
 
 
-	if(bar mod 2 = 0))		#check to see if number is even
+	if(bar mod 2 = 0)		#check to see if number is even
 		toss 1				#number is even
 	endif
 	
@@ -24,6 +24,4 @@ while(count < 200)
 	count <- count + 1
 endwhile
 
-isEven <- foo(input) 	
-							#question: newline at end of give? if so, remove potential edit section
-							#if not, this should work but needs newline characters.
+isEven <- foo(input)
