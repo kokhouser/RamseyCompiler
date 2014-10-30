@@ -60,7 +60,7 @@
 
 		public function parse(){
 			$this->program();
-			echo("parsing completed successfully! Good job at writing Ramsey!\n");
+			echo("Parsing completed successfully! Good job at writing Ramsey!\n");
 		}
 
 		private function program(){
