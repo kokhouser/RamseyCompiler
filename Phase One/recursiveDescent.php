@@ -48,7 +48,7 @@
 				exit("Error on line ".$this->lineNum.": expected token ".$matchTo." but was given ".$this->lookahead."\n");
 			}
 			else{
-				echo("I matched a ".$matchTo." on line ".$this->lineNum."\n");
+				//echo("I matched a ".$matchTo." on line ".$this->lineNum."\n");
 				if($matchTo=="<endl>"){
 					$this->lineNum+=1;
 				}
