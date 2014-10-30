@@ -1,4 +1,4 @@
-fun foo(in bar) as in
+fun foo(in bar) as true
 endfun
 
 

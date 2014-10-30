@@ -5,7 +5,7 @@
 <ident>
 <r_paren>
 <as>
-<in_type>
+<true>
 <endl>
 <endfun>
 <endl>
