@@ -54,16 +54,17 @@ Follow (<type>): { <endl>, <ident> }
 ------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------------
-Predict (<program> -> <top_lvl_stmt>):  { <fun> }
+Predict (<program> -> <top_lvl_stmts>):  { <fun> }
 Predict (<top_lvl_stmts> -> <top_lvl_stmt> <endl> <top_lvl_stmt>): { <fun> }
 Predict (<top_lvl_stmts> -> λ): { <$> }
 Predict (<top_lvl_stmt> -> fun <ident> (<params>) as <type> \n <stmts> endfun): { <fun> }
 Predict (<params> -> <param> <paramlist>): { <in>, <boo>, <big>, <small> }
 Predict (<params> -> λ): { <r_paren> }
 Predict (<paramlist>-> <comma> <params>){<comma>}
-Predict (<paramlist>-> λ ): { <r_paren> }
+Predict (<paramlist>-> λ ): { <r_paren> } //error was here, we were pushing past the rparen
 Predict (<param> -> <type> <ident>): { <in>, <boo>, <big>, <small> }
-Predict (<stmts> -> <stmt> <morestmts>): { <if>, <while>, <ident>, <in>, <boo>, <big>, <small> ,<digit>,<true>, <false>, <NOT>, <l_paren>, <toss> }
+Predict (<param> -> <topexpression>): {<literal>, <true>, <false>, NOT, (, <ident>}
+Predict (<stmts> -> <stmt> <morestmts>): { <if>, <while>, <ident>, <in>, <boo>, <big>, <small> ,<digit>,<true>, <false>, <NOT>, <l_paren>, <toss>, <endl> }
 Predict (<morestmts> -> <endl> <stmts>): { <endl>}
 Predict (<morestmts> -> λ): {elf, endwhile , endfun, else, endif }
 Predict (<stmt> -> <conditional>): { if, while }
@@ -77,8 +78,8 @@ Predict (<assignment> -> <assign_op> <topexpression> ): { <assign_op> }
 Predict (<catassign>   -> <assignment> ): { <assign_op> }
 Predict (<catassign>   -> λ ): { <endl>, elf, endwhile, endfun, else, endif}
 Predict (<conditional>  -> if (<topexpression>) <endl> <stmts> <elfears> endif): { <if> }
-Predict (<conditional>  -> while (<expression>) \n <stmts> endwhile): { while }
-Predict (<elfears> -> elf( <expression> ) <stmts> <elfears> ): { elf }
+Predict (<conditional>  -> while (<expression>) \n <stmts> endwhile): { while } //supposed to be topexpression
+Predict (<elfears> -> elf( <expression> <)> <stmts> <elfears> ): { elf } //supposed to be topexpression, also pushed extra rparen
 Predict (<elfears> -> else <stmts> ): { else }
 Predict (<elfears> -> λ ): { <endif> }
 Predict (<topexpression> -> <expression><expressionlist>): { <ident>, <digit>, <NOT> }

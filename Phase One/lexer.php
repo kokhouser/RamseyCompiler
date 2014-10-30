@@ -332,9 +332,11 @@
 	if($lexingError!=""){
 		echo $lexingError;
 	}
-	else
+	else{
+		$tokenStream.="<$>";
 		echo $tokenStream;
 		file_put_contents("token.txt", $tokenStream);
+	}
 		//print_r($tokenArray); //Debugging statement.
 		
 		//Recursive-Descent parser starts here.

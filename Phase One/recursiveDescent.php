@@ -1,10 +1,13 @@
 <?php
 
+	//require("aptGen.php")
+
 	class Parser{
 		private $tokens;
 		private $index;
 		private $lookahead;
 		private $lineNum;
+		//private $aptGen; //parse tree generator
 
 		public function __construct($arr){
 			$this->tokens = $arr;
@@ -18,330 +21,247 @@
 			$this->lookahead=$this->tokens[$this->index];
 		}
 
+		private function matchNT($array){ 	//match function forces only one possibility, so for multiple rules and not a terminal, use this one , stands for matchNonTerminal
+			$hasMatch=false;
+			$location;
+			foreach($array as $key => $val){
+				if($this->lookahead==$val){
+					$hasMatch=true;
+					$location=$key;
+					//echo("matchNT looking for ".$this->lookahead."\n");
+				}
+			}
+			if($hasMatch){
+				return $location;		//can use location to determine which function is called next
+			}
+			else{
+				$error="";
+				foreach($array as $val){
+					$error.=$val."\n";
+				}
+				exit("Error on line ".$this->lineNum.": could not match token ".$this->lookahead.", expected one of the following:\n".$error);
+			}
+		}
+
+		private function match($matchTo){
+			if($matchTo!=$this->lookahead){
+				exit("Error on line ".$this->lineNum.", expected token ".$matchTo."\n");
+			}
+			else{
+				echo("I matched a ".$matchTo." on line ".$this->lineNum."\n");
+				if($matchTo=="<endl>"){
+					$this->lineNum+=1;
+				}
+				//$this->aptGen.formTree($inToken) //calls aptGen to make a node in the parse tree with behavior based on the input token
+				$this->pushLookahead();
+		
+			}
+		}
+
 		public function parse(){
 			$this->program();
 		}
 
 		private function program(){
-			if($this->lookahead=="<fun>"){
-				$this->toplvlstmts();
-			}
-			else{
-				echo "Expected token <fun> on line ".$this->lineNum. "\n";
-			}
+			$this->matchNT(array("<fun>")); //there is only one option in array, so no need to check the location of match in the array
+			$this->toplvlstmts();
+
 		}
 
 		private function toplvlstmts(){
-			if(($this->lookahead)=="<fun>"){
-				$this->toplvlstmt();
-
-				//match endl
-				$this->lineNum+=1;	//this may be the only affect of matching endl
-				//$this->pushLookahead();
-				$this->toplvlstmts();
-                if (!(is_null($this->lookahead))){
-                    echo "Code on line ".$this->lineNum." not in functions!\n";
-                }
+			$case=$this->matchNT(array("<fun>", "<$>"));
+			if($case==0){
+			$this->toplvlstmt();
+			$this->match("<endl>");
+			$this->toplvlstmts();
 			}
-			else if(is_null($this->lookahead)){ 	//do we want to append end of input token to end of stream to be used instead of null? (I think we should!)
-				return NULL;
-			}
-			else{
-				//throw error, invalid token in lookahead
+			else if($case==1){
+				//were done!
 			}
 			
 		}
 
 		private function toplvlstmt(){
-			if($this->lookahead=="<fun>"){
-				//match <fun>
-				$this->pushLookahead();
-				//match <ident>
-				$this->pushLookahead();
-				//match <l_paren>
-				$this->pushLookahead();
+			$case=$this->matchNT(array("<fun>"));
+			if($case==0){
+				$this->match("<fun>");
+				$this->match("<ident>");
+				$this->match("<l_paren>");
 				$this->params();
-				//match <r_paren>
-				$this->pushLookahead();
-				//match as
-				$this->pushLookahead();
+				$this->match("<r_paren>");
+				$this->match("<as>");
 				$this->type();
-				//match endl
-				$this->lineNum+=1;
-				$this->pushLookahead();
+				$this->match("<endl>");
 				$this->stmts();
-				//match endfun
-				$this->pushLookahead();
-			}
-			else{
-				echo "error: expected token <fun> on line ".$this->lineNum."\n";
+				$this->match("<endfun>");
 			}
 		}
 		
 		private function params(){
-		    if($this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"
-		    	||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"
-                ||$this->lookahead=="<ident>" ){
+		    $case=$this->matchNT(array("<in_type>","<boo_type>","<big_type>","<small_type>","<ident>","<r_paren>"));
+		    if($case>=0&&$case<=4){
 		    	$this->param();
-		        $this->paramlist();
-            }
-            // Is the following "if" block correct? Is this how we handle going to lambda?
-            else if ($this->lookahead=="<r_paren>"){
-                //match <r_paren>
-                $this->pushLookahead();
-            }
-            else{
-                echo "error:expected token <type> or <r_paren> on line ".$this->lineNum. "\n";
-            }
+		    	$this->paramlist();
+		    }
+		    else if($case==5){
+		    	//empty, let it return
+		    }
 		}
         
         private function paramlist(){
-	        if($this->lookahead== "<comma>"){
-		        //match <comma>
-		        $this->pushLookahead();
-		        $this->params();
-            }
-            // Is the following "if" block correct? Is this how we handle going to lambda?
-            else if($this->lookahead=="<r_paren>"){
-                //match <r_paren>
-                $this->pushLookahead();
-            }
-            else{
-                echo "error:expected token <comma> or <r_paren> on line ".$this->lineNum. "\n";
-            }
+	        $case=$this->matchNT(array("<comma>","<r_paren>"));
+	        if($case==0){
+	        	$this->match("<comma>");
+	        	$this->params();
+	        }
+	        else if($case==1){
+	        	//don't match, let it return
+	        }
 		}
         
         private function param(){
-		    if($this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"
-		    	||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>" ){
-		        $this->type();
-		        //match <ident>
-			    $this->pushLookahead();
+		   $case=$this->matchNT(array("<in_type>","<boo_type>","<big_type>","<small_type>","<ident>","<literal>","<true>","<false>","<not_op>","<r_paren>"));
+		    if($case>=0&&$case<=3){
+		    	$this->type();
+		    	$this->match("<ident>");
 		    }
-            else if ($this->lookahead=="<literal>"||$this->lookahead=="<ident>"||$this->lookahead=="<true>"||$this->lookahead=="<false>"||$this->lookahead=="<not_op>"||$this->lookahead=="<l_paren>"){
-                $this->topexpression();
-            }
-		    else{
-		        echo "error: expected token <type>, <literal>, <ident>, <true>, <false>, or <l_paren> on line ".$this->lineNum."\n";
+		    else if($case>=4&&$case<=9){
+		    	$this->topexpression();	
 		    }
 		}
         
         private function stmts(){
-		    if($this->lookahead=="<if>"||$this->lookahead=="<while>"||$this->lookahead=="<ident>"||$this->lookahead=="<in_type>"
-		    ||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"|$this->lookahead=="<literal>"
-		    ||$this->lookahead=="<true>"||$this->lookahead=="<false>"||$this->lookahead=="<not_op>"||$this->lookahead=="<toss>"
-            ||$this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"
-            ||$this->lookahead=="<else>"||$this->lookahead=="<endif>" ){
-		        $this->stmt();
-		        $this->morestmts();
-		    }
-		    else{
-		        echo "error: expected token <if>, <while>, <ident>, <type>, <literal>, or <not_op> on line ".$this->lineNum."\n";
-		    }
-		}
-		
-		private function morestmts(){
-		    if ($this->lookahead=="<endl>"){
-		        //match <endl>
-		        $this->pushLookahead();
-		        $this->lineNum+=1;
-		        $this->stmts();
-		    }
-		    // Is the following "if" block correct? Is this how we handle going to lambda?
-		    else if ($this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"||$this->lookahead=="<else>"
-		    ||$this->lookahead=="<endif>"){
-		        //$this->pushLookahead();
-		    }
-		    else{
-                echo "error:expected token <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$this->lineNum. "\n";
-            }
+        	$case=$this->matchNT(array("<if>", "<while>", "<ident>", "<in_type>", "<boo_type>", "<big_type>", "<small_type>" ,"<literal>","<true>", "<false>", "<not_op>", "<l_paren>", "<toss>", "<endl>", "<endfun>", "<endwhile>", "<endif>", "<elf>", "<else>"));
+			if($case>=0&&$case<=13){
+			$this->stmt();
+			$this->match("<endl>");
+			$this->stmts();		
+			}
+ 			else if($case>=14&&$case<=18){
+ 				//goes to empty str, do nothing
+ 			}
 		}
 
         private function stmt(){
-            if ($this->lookahead=="<if>" || $this->lookahead=="<while>"){
-                $this->conditional();
-            }
-            else if ($this->lookahead=="<toss>"){
-                //match <toss>
-                $this->pushLookahead();
-                $this->topexpression();
-            }
-            else if ($this->lookahead=="<ident>"||$this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"
-            ||$this->lookahead=="<small_type>"/*||$this->lookahead=="<literal>"*/){
-                $this->varhandler();
-            }
-            // Is the following "if" block correct? Is this how we handle going to lambda?
-            else if ($this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"
-            ||$this->lookahead=="<else>"||$this->lookahead=="<endif>"){
-                /*Is the following correct??
-                if ($this->lookahead=="<endl>"){
-                    $this->lineNum+=1;
-                    //$this->pushLookahead();
-                }*/
-            }
-            else{
-		        echo "error: expected token <if>, <while>, <ident>, <type>, <literal>, or <not_op> on line ".$this->lineNum."\n";
-            }
-
+			$case=$this->matchNT(array("<if>","<while>","<toss>","<ident>","<in_type>","<big_type>","<small_type>","<boo_type>","<endl>"));
+			if($case>=0&&$case<=1){
+				$this->conditional();
+			}
+			else if($case==2){
+				$this->match("<toss>");
+				$this->topexpression;
+			}
+			else if($case>=3&&$case<=7){
+				$this->varhandler();
+			}
+			else if($case==8){
+				//nothing, command goes to empty
+			}
         }
         
         private function varhandler(){
-            if ($this->lookahead=="<ident>"){
-                //match <ident>
-                $this->pushLookahead();
-                $this->assignment();
-            }
-            else if ($this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"){
-                $this->declaration();
-                $this->catassign();
-            }/* might need this
-            else if ($this->lookahead=="<literal>"){
-                $this -> topexpression();
-            }*/
-            else{
-                echo "error: expected token <identifier> or <type> on line ".$this->lineNum. "\n";
-            }
+        	$case=$this->matchNT(array("<ident>","<in_type>","<big_type>","<small_type>","<boo_type>"));
+        	if($case==0){
+        		$this->match("<ident>");
+        		$this->assignment();
+        	}
+        	else if($case>=1&&$case<=4){
+        		$this->declaration();
+        		$this->catassign();
+        	}
         }
         
         private function declaration(){
-            if ($this->lookahead=="<in_type>"||$this->lookahead=="<boo_type>"||$this->lookahead=="<big_type>"||$this->lookahead=="<small_type>"){
-                $this->type();
-                //match <ident>
-                $this->pushLookahead();
-            }
-            else{
-                echo "error: expected token <type> on line ".$this->lineNum. "\n";
-            }
+            $case=$this->matchNT(array("<in_type>","<big_type>","<small_type>","<boo_type>"));
+            if($case>=0&&$case<=3){
+            	$this->match("<ident>");
+        	}
         }
         
         private function assignment(){
-            if ($this->lookahead=="<assign_op>"){
-                //match <assign_op>
-                $this->pushLookahead();
-                $this->topexpression();
-            }
-            else{
-                echo "error: expected token <assign_op> on line ".$this->lineNum. "\n";
-            }
+        	$case=$this->matchNT(array("<assign_op>"));
+        	if($case==0){
+        		$this->match("<assign_op>");
+        		$this->topexpression();
+        	}
         }
         
         private function catassign(){
-            if ($this->lookahead=="<assign_op>"){
-                $this->assignment();
-            }
-            //Is the following if block correct?
-            else if ($this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"||$this->lookahead=="<else>"
-            ||$this->lookahead=="<endif>"){
-                /*Is the following correct??
-                if ($this->lookahead=="<endl>"){
-                    $this->lineNum+=1;
-                    $this->pushLookahead();
-                }*/
-            }
-            else{
-                echo "error:expected token <assign_op>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$this->lineNum. "\n";
-            }
+        	$case=$this->matchNT(array("<assign_op>","<endl>"));
+        	if($case==0){
+        		$this->assignment();
+        	}
+        	else if($case==1){
+        		//do nothing, goes to empty
+        	}
         }
-        
+
         private function conditional(){
-            if ($this->lookahead=="<if>"){
-                //match <if>
-                $this->pushLookahead();
-                //match <l_paren>
-                $this->pushLookahead();
-                $this->topexpression();
-                //match <r_paren>
-                $this->pushLookahead();
-                //match <endl>
-                $this->pushLookahead();
-                $this->lineNum+=1;
-                $this->stmts();
-                $this->elfears();
-                //match <endif>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<while>"){
-                //match <while>
-                $this->pushLookahead();
-                //match <l_paren>
-                $this->pushLookahead();
-                $this->expression();
-                //match <r_paren>
-                $this->pushLookahead();
-                //match <endl>
-                $this->pushLookahead();
-                $this->lineNum+=1;
-                $this->stmts();
-                //match <endwhile>
-                $this->pushLookahead();
-            }
-            else{
-                echo "error:expected token <if> or <while> on line ".$this->lineNum. "\n";
-            }
+        	$case=$this->matchNT(array("<if>","<while>"));
+        	if($case==0){
+        		$this->match("<if>");
+        		$this->match("<l_paren>");
+        		$this->topexpression();
+        		$this->match("<r_paren>");
+        		$this->match("<endl>");
+        		$this->stmts();
+        		$this->elfears();
+        		$this->match("<endif>");
+        	}
+        	else if($case==1){
+        		$this->match("<while>");
+        		$this->match("<l_paren>");
+        		$this->topexpression();
+        		$this->match("<r_paren>");
+        		$this->match("<endl>");
+        		$this->stmts();
+        		$this->match("<endwhile>");
+        	}
         }
         
         private function elfears(){
-            if ($this->lookahead=="<elf>"){
-                //match <elf>
-                $this->pushLookahead();
-                //match <l_paren>
-                $this->pushLookahead();
-                $this->expression();
-                //match <r_paren>
-                $this->pushLookahead();
-                $this->stmts();
-                $this->elfears();
-                //match <r_paren>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<else>"){
-                //match <else>
-                $this->pushLookahead();
-                $this->stmts();
-            }
-            //Is the following "if" block correct? Is this how we're handling lamdas?
-            else if ($this->lookahead=="<endif>"){
-                //$this->pushLookahead();
-            }
-            else{
-                echo "error:expected token <elf> or <else> on line ".$this->lineNum. "\n";
-            }
+        	$case=$this->matchNT(array("<elf>","<else>","<endif>"));
+        	if($case==0){
+        		$this->match("<elf>");
+        		$this->match("<l_paren>");
+        		$this->topexpression();
+        		$this->match("<r_paren>");
+        		$this->stmts();
+        		$this->elfears();
+        	}
+        	else if($case==1){
+        		$this->match("<else>");
+        		$this->stmts();
+        	}
+        	else if($case==2){
+        		//empty, do nothing
+        	}
+
         }
         
         private function topexpression(){
-            if ($this->lookahead=="<ident>"||$this->lookahead=="<literal>"||$this->lookahead=="<true>"||$this->lookahead=="<false>"||$this->lookahead=="<not_op>"){
-                $this->expression();
-                $this->expressionlist();
-            }
-            else if ($this->lookahead=="<l_paren>"){
-                //match <l_paren>
-                $this->pushLookahead();
-                $this->expression();
-                $this->expressionlist();
-                //match <r_paren>
-                $this->pushLookahead();
-                $this->expressionlist();
-            }
-            else{
-                echo "error:expected token <ident>, <literal>, <true>, <false>, <not_op> or <l_paren> on line ".$this->lineNum. "\n";
-            }
+        	$case=$this->matchNT(array("<ident>","<literal>","<true>","<false>","<not_op>", "<l_paren>"));
+        	if($case>=0&&$case<=4){
+        		$this->expression();
+        		$this->expressionlist();
+        	}
+        	else if($case==5){
+        		$this->match("<l_paren>");
+        		$this->expression();
+        		$this->expressionlist();
+        		$this->match("<r_paren>");
+        		$this->expressionlist();
+        	}
         }
         
         private function expressionlist(){
-            if ($this->lookahead=="<add_op>"||$this->lookahead=="<sub_op>"||$this->lookahead=="<mult_op>"||$this->lookahead=="<div_op>"
-                ||$this->lookahead=="<mod_op>"||$this->lookahead=="<less_op>"||$this->lookahead=="<greater_op>"||$this->lookahead=="<lesseq_op>"
-                ||$this->lookahead=="<greateq_op>"||$this->lookahead=="<noteq_op>"||$this->lookahead=="<and_op>"||$this->lookahead=="<or_op>"
-                ||$this->lookahead=="<compare_op>"){
-                $this->sop();
-                $this->topexpression();
+            $case=$this->matchNT(array("<add_op>","<sub_op>","<mult_op>","<div_op>","<mod_op>","<less_op>","<greater_op>","<lesseq_op>","<greateq_op>","<noteq_op>","<and_op>","<or_op>","<compare_op>","<endl>","<elf>","<endwhile>","<endfun>","<else>","<endif>","<r_paren>"));
+            if($case>=0&&$case<=12){
+            	$this->sop();
+            	$this->topexpression();
             }
-            //Is the following "if" block correct? Is this how we're handling lamdas?
-            else if ($this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"||$this->lookahead=="<endfun>"
-                ||$this->lookahead=="<else>"||$this->lookahead=="<endif>"||$this->lookahead=="<r_paren>"){
-                //$this->pushLookahead();
-            }
-            else{
-                echo "error:expected token <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else>, <endif> or <r_paren> on line ".$this->lineNum. "\n";
+            else if($case>=13&&$case<=19){
+            	//empty, do nothing
             }
         }
         
@@ -479,21 +399,18 @@
         }
         
         private function type(){
-            if ($this->lookahead=="<in_type>"){
-                //match <in_type>
-                $this->pushLookahead();
+            $case=$this->matchNT(array("<in_type>","<boo_type>","<big_type>","<small_type>"));
+            if($case==0){
+            	$this->match("<in_type>");
             }
-            else if ($this->lookahead=="<boo_type>"){
-                //match <boo_type>
-                $this->pushLookahead();
+            else if($case==1){
+            	$this->match("<boo_type>");
             }
-            else if ($this->lookahead=="<big_type>"){
-                //match <big_type>
-                $this->pushLookahead();
+           else if($case==2){
+            	$this->match("<big_type>");
             }
-            else if ($this->lookahead=="<small_type>"){
-                //match <small_type>
-                $this->pushLookahead();
+            else if($case==3){
+            	$this->match("<small_type>");
             }
         }
         //Done!

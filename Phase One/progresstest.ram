@@ -1,0 +1,12 @@
+fun foo(in bar) as in
+endfun
+
+
+
+
+fun fooz(boo barz) as boo
+
+
+
+
+endfun

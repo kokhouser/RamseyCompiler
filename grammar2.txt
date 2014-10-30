@@ -10,10 +10,9 @@
 <paramlist>		-> <comma> <params>
 				| ε
 <param>		   	-> <type> <ident>
-				| <topexpression>
-<stmts>		   	-> <stmt> <morestmts>
-<morestmts>		-> <endl> <stmts>
-			    | ε
+				| <topexpression> 
+<stmts>		   	-> <stmt> <endl> <stmts>
+				| ε
 
 <stmt>		   	-> <conditional>
 				| ε
