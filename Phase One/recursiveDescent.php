@@ -149,7 +149,7 @@
 			}
 			else if($case==2){
 				$this->match("<toss>");
-				$this->topexpression;
+				$this->topexpression();
 			}
 			else if($case>=3&&$case<=7){
 				$this->varhandler();
@@ -255,147 +255,106 @@
         }
         
         private function expressionlist(){
-            $case=$this->matchNT(array("<add_op>","<sub_op>","<mult_op>","<div_op>","<mod_op>","<less_op>","<greater_op>","<lesseq_op>","<greateq_op>","<noteq_op>","<and_op>","<or_op>","<compare_op>","<endl>","<elf>","<endwhile>","<endfun>","<else>","<endif>","<r_paren>"));
+            $case=$this->matchNT(array("<add_op>","<sub_op>","<mult_op>","<div_op>","<mod_op>","<less_op>","<greater_op>","<lesseq_op>","<greateq_op>","<noteq_op>","<and_op>","<or_op>","<compare_op>","<endl>","<r_paren>"));
             if($case>=0&&$case<=12){
             	$this->sop();
             	$this->topexpression();
             }
-            else if($case>=13&&$case<=19){
+            else if($case>=13&&$case<=14){
             	//empty, do nothing
             }
         }
         
         private function expression(){
-            if ($this->lookahead=="<ident>"){
-                //match <ident>
-                $this->pushLookahead();
-                $this->funcall();
-            }
-            else if ($this->lookahead=="<literal>"||$this->lookahead=="<true>"||$this->lookahead=="<false>"){
-                $this->literals();
-            }
-            else if ($this->lookahead=="<not_op>"){
-                //match <not_op>
-                $this->pushLookahead();
-                //match <l_paren>
-                $this->pushLookahead();
-                $this->topexpression();
-                //match <r_paren>
-                $this->pushLookahead();
-            }
-            else{
-                //echo $this->lookahead; //(I don't think we need lookahead here)
-                echo "error:expected token <ident>, <literal>, <true> or <false> on line ".$this->lineNum. "\n";
-            }
+        	$case=$this->matchNT(array("<ident>","<literal>","<true>","<false>","<not_op>"));
+        	if($case==0){
+        		$this->match("<ident>");
+        		$this->funcall();
+        	}
+        	else if($case>=1&&$case<=3){
+        		$this->literals();
+        	}
+        	else if($case==4){
+        		$this->match("<not_op>");        	
+        		$this->match("<l_paren>");        	
+        		$this->topexpression();        	
+        		$this->match("<r_paren>");        	
+        	}
         }
         
         private function funcall(){
-            if ($this->lookahead=="<l_paren>"){
-                //match <l_paren>
-                $this->pushLookahead();
-                $this->params();
-                //match <r_paren>
-                $this->pushLookahead();
-            }
-            //Is the following "if" block correct? Is this how we're handling lamdas?
-            else if ($this->lookahead=="<add_op>"||$this->lookahead=="<sub_op>"||$this->lookahead=="<mult_op>"||$this->lookahead=="<div_op>"
-                ||$this->lookahead=="<mod_op>"||$this->lookahead=="<less_op>"||$this->lookahead=="<greater_op>"||$this->lookahead=="<lesseq_op>"
-                ||$this->lookahead=="<greateq_op>"||$this->lookahead=="<noteq_op>"||$this->lookahead=="<and_op>"||$this->lookahead=="<or_op>"
-                ||$this->lookahead=="<compare_op>"||$this->lookahead=="<endl>"||$this->lookahead=="<elf>"||$this->lookahead=="<endwhile>"
-                ||$this->lookahead=="<endfun>"||$this->lookahead=="<else>"||$this->lookahead=="<endif>"){
-                //$this->pushLookahead();
-            }
-            else{
-                //echo $this->lookahead;//(I don't think we need lookahead here)
-                echo "error:expected token <l_paren>, <operator>, <endl>, <elf>, <endwhile>, <endfun>, <else> or <endif> on line ".$this->lineNum. "\n";
-            }
+        	$case=$this->matchNT(array("<l_paren>","<add_op>","<sub_op>","<mult_op>","<div_op>","<mod_op>","<less_op>","<greater_op>","<lesseq_op>","<greateq_op>","<noteq_op>","<and_op>","<or_op>","<compare_op>","<endl>"));
+        	if($case==0){
+        		$this->match("<l_paren>");
+        		$this->params();
+        		$this->match("<r_paren>");
+        	}
+        	else if($case>=1&&$case<=14){
+        		//do nothing
+        	}
         }
         
         private function sop(){
-            if ($this->lookahead=="<add_op>"){
-                //match <add_op>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<sub_op>"){
-                //match <sub_op>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<mult_op>"||$this->lookahead=="<div_op>"||$this->lookahead=="<mod_op>"||$this->lookahead=="<less_op>"
-            ||$this->lookahead=="<greater_op>"||$this->lookahead=="<lesseq_op>"||$this->lookahead=="<greateq_op>"||$this->lookahead=="<noteq_op>"
-            ||$this->lookahead=="<and_op>"||$this->lookahead=="<or_op>"||$this->lookahead=="<compare_op>"){
-                $this->fop();
-            }
-            else {
-                echo "error:expected token <operator> on line ".$this->lineNum. "\n";
-            }
+			$case=$this->matchNT(array("<add_op>","<sub_op>","<mult_op>","<div_op>","<mod_op>","<less_op>","<greater_op>","<lesseq_op>","<greateq_op>","<noteq_op>","<and_op>","<or_op>","<compare_op>"));
+			if($case==0){
+				$this->match("<add_op>");
+			}
+			else if($case==1){
+				$this->match("<sub_op>");
+			}
+			else if($case>=2&&$case<=12){
+				$this->fop();
+			}
         }
         
         private function fop(){
-            if ($this->lookahead=="<mult_op>"){
-                //match <mult_op>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<div_op>"){
-                //match <div_op>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<mod_op>"){
-                //match <mod_op>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<less_op>"){
-                //match <less_op>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<greater_op>"){
-                //match <greater_op>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<lesseq_op>"){
-                //match <lesseq_op>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<greateq_op>"){
-                //match <greateq_op>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<noteq_op>"){
-                //match <noteq_op>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<and_op>"){
-                //match <and_op>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<or_op>"){
-                //match <or_op>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<compare_op>"){
-                //match <compare_op>
-                $this->pushLookahead();
-            }
-            else{
-                echo "error:expected token <operator> on line ".$this->lineNum. "\n";
-            }
+        	$case=$this->matchNT(array("<mult_op>","<div_op>","<mod_op>","<less_op>","<greater_op>","<lesseq_op>","<greateq_op>","<noteq_op>","<and_op>","<or_op>","<compare_op>"));
+        	if($case==0){
+        		$this->match("<mult_op>");
+        	}
+        	if($case==1){
+        		$this->match("<div_op>");
+        	}
+        	if($case==2){
+        		$this->match("<mod_op>");
+        	}
+        	if($case==3){
+        		$this->match("<less_op>");
+        	}
+        	if($case==4){
+        		$this->match("<greater_op>");
+        	}
+        	if($case==5){
+        		$this->match("<lesseq_op>");
+        	}
+        	if($case==6){
+        		$this->match("<greateq_op>");
+        	}
+        	if($case==7){
+        		$this->match("<noteq_op>");
+        	}
+        	if($case==8){
+        		$this->match("<and_op>");
+        	}
+        	if($case==9){
+        		$this->match("<or_op>");
+        	}
+        	if($case==10){
+        		$this->match("<compare_op>");
+        	}
         }
         
         private function literals(){
-            if ($this->lookahead=="<literal>"){
-                //match <literal>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<true>"){
-                //match <true>
-                $this->pushLookahead();
-            }
-            else if ($this->lookahead=="<false>"){
-                //match <false>
-                $this->pushLookahead();
-            }
-            else{
-                echo "error:expected token <literal>, <true> or <false> on line ".$this->lineNum. "\n";
-            }
+        	$case=$this->matchNT(array("<literal>","<true>","<false>"));
+        	if($case==0){
+        		$this->match("<literal>");
+        	}
+        	if($case==1){
+        		$this->match("<true>");
+        	}
+        	if($case==2){
+        		$this->match("<false>");
+        	}
         }
         
         private function type(){
