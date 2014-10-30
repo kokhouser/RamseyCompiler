@@ -44,6 +44,7 @@
 <compare_op>
 <literal>
 <r_paren>
+<r_paren>
 <endl>
 <toss>
 <literal>

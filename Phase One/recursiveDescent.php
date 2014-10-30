@@ -45,7 +45,7 @@
 
 		private function match($matchTo){
 			if($matchTo!=$this->lookahead){
-				exit("Error on line ".$this->lineNum.", expected token ".$matchTo."\n");
+				exit("Error on line ".$this->lineNum.": expected token ".$matchTo." but was given ".$this->lookahead."\n");
 			}
 			else{
 				echo("I matched a ".$matchTo." on line ".$this->lineNum."\n");
