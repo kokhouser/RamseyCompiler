@@ -183,6 +183,7 @@
         private function declaration(){
             $case=$this->matchNT(array("<in_type>","<big_type>","<small_type>","<boo_type>"));
             if($case>=0&&$case<=3){
+                $this->type();
             	$this->match("<ident>");
         	}
         }
@@ -292,13 +293,13 @@
         }
         
         private function funcall(){
-        	$case=$this->matchNT(array("<l_paren>","<add_op>","<sub_op>","<mult_op>","<div_op>","<mod_op>","<less_op>","<greater_op>","<lesseq_op>","<greateq_op>","<noteq_op>","<and_op>","<or_op>","<compare_op>","<endl>"));
+        	$case=$this->matchNT(array("<l_paren>","<add_op>","<sub_op>","<mult_op>","<div_op>","<mod_op>","<less_op>","<greater_op>","<lesseq_op>","<greateq_op>","<noteq_op>","<and_op>","<or_op>","<compare_op>","<endl>", "<r_paren>"));
         	if($case==0){
         		$this->match("<l_paren>");
         		$this->params();
         		$this->match("<r_paren>");
         	}
-        	else if($case>=1&&$case<=14){
+        	else if($case>=1&&$case<=15){
         		//do nothing
         	}
         }
