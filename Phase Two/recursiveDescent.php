@@ -1,6 +1,6 @@
 <?php
 
-	//require("aptGen.php")
+	//require("astGen.php")
 
 	class Parser{
 		private $tokens;
