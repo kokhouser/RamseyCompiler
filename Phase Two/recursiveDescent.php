@@ -7,7 +7,7 @@
 		private $index;
 		private $lookahead;
 		private $lineNum;
-		//private $aptGen; //parse tree generator
+		//private $astGen; //abstract syntax tree generator
 
 		public function __construct($arr){
 			$this->tokens = $arr;
@@ -135,7 +135,7 @@
 		    	$this->match("<ident>");
 		    }
 		    else if($case>=4&&$case<=9){
-		    	$this->topexpression();	
+		    	$this->topexpression();
 		    }
 		}
         
@@ -144,7 +144,7 @@
 			if($case>=0&&$case<=13){
 			$this->stmt();
 			$this->match("<endl>");
-			$this->stmts();		
+			$this->stmts();
 			}
  			else if($case>=14&&$case<=18){
  				//goes to empty str, do nothing
@@ -285,10 +285,10 @@
         		$this->literals();
         	}
         	else if($case==4){
-        		$this->match("<not_op>");        	
-        		$this->match("<l_paren>");        	
-        		$this->topexpression();        	
-        		$this->match("<r_paren>");        	
+        		$this->match("<not_op>");
+        		$this->match("<l_paren>");
+        		$this->topexpression();
+        		$this->match("<r_paren>");
         	}
         }
         
