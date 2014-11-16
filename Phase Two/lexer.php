@@ -241,6 +241,7 @@
 							$token= "<literal>";
 							$isCurrentMatch = true;
 							$multiendl = false;
+							$strname = $str;
 							//save val somehow here
 					}
 					else{
@@ -274,7 +275,7 @@
 							$token= "<ident>";
 							$isCurrentMatch = true;
 							$multiendl = false;
-              $strname = $str;
+              				$strname = $str;
 							//save val here somehow
 						}
 					}
@@ -294,7 +295,6 @@
 					  $newToken = new IdentToken();
 					  $newToken -> id = $tokenId;
 					  $newToken -> name = $strname;
-					  $strname = "";
 					  $tokenId++; //Increment token ID counter.
 					  $tokenArray[] = $newToken;
 					  //print_r($tokenArray); //Debugging statement.
@@ -303,11 +303,11 @@
 					  $newLitToken = new LiteralToken();
 					  $newLitToken -> id = $tokenId;
 					  $newLitToken -> value = $strname;
-					  $strname = "";
 					  $tokenId++;
 					  $tokenArray[] = $newLitToken;
 					}
 					$token="";
+			 	    $strname = "";
 				}
 				$length++;
 
@@ -338,7 +338,7 @@
 	}
 	else{
 		$tokenStream.="<$>";
-		echo $tokenStream;
+		//echo $tokenStream;
 		file_put_contents("token.txt", $tokenStream);
 	}
 		//print_r($tokenArray); //Debugging statement.

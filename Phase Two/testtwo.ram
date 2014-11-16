@@ -8,7 +8,7 @@ bar <- bar/2 				#bar will be the same evenness as before
 
 
 
-	if(bar mod 2 = 0)		#check to see if number is even
+	if(bar mod 2 = 0)	#check to see if number is even
 		toss 1				#number is even
 	endif
 	

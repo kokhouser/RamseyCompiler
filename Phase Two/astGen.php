@@ -24,6 +24,15 @@
 	class ast{
 		private $nodes; //array of nodes, root is always at 0
 		private $index; //current end for adding to
+		private $tokenArray;
+
+		public function get_tokenArray(){
+			return $this->tokenArray;
+		}
+
+		public function set_tokenArray($input){
+			$this->tokenArray = $input;
+		}
 		
 	}
 
