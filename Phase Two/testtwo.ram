@@ -1,4 +1,4 @@
-fun Foo(in bar) as boo 		#nice use of overused unofficial standards
+fun foo(in bar) as boo 		#nice use of overused unofficial standards
 	
 							#do some maths for fun!
 bar <- bar+242				

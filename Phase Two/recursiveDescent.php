@@ -20,7 +20,8 @@
 
 		private function pushLookahead(){
 			$this->index+=1;
-			$this->lookahead=$this->tokens[$this->index];
+            if ($this->index < count($this->tokens))
+			     $this->lookahead=$this->tokens[$this->index];
 		}
 
         private function addNodesToAst($token, $parentIndex, $currentIndex){ //function to add nodes into the ast. Pass in the token name and parent index and it'll do the rest.
@@ -66,7 +67,6 @@
 				}
 				//$this->aptGen.formTree($inToken) //calls aptGen to make a node in the parse tree with behavior based on the input token
 				$this->pushLookahead();
-		
 			}
 		}
 

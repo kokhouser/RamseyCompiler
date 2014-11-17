@@ -14,6 +14,9 @@
 	$sapling = new Parser($tokens,$astGenerator); //because, at the end of it, we get a parse tree >.> lol
 	$sapling->parse();
 
+	$astGenerator -> prune(0);
+
+	//print_r ($astGenerator->get_nodes());
 	//print_r($tokenArray);
 	//print_r ($astGenerator -> get_tokenArray());//debugging statement
 	//Note that there are n+1 array slots because of the extra endline.

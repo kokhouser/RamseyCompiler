@@ -20,6 +20,9 @@
 		public function get_children(){ //returns the whole array, to be iterated over later
 			return $this->children;
 		}
+		public function set_child($currentIndex, $newChildIndex){
+			$this->children[$currentIndex] = $newChildIndex;
+		}
 	}
 
 	class ast{
@@ -56,6 +59,26 @@
 
 		public function get_nodes(){
 			return $this->nodes;
+		}
+
+		public function prune($inNode){ //Function to prune off excess nodes to turn our parse tree into a true AST
+			$currentNode = $inNode;
+			$children = $this->nodes[$inNode]->get_children(); //getting the array of children to inspect THEIR children
+			for($i = 0; $i<count($children); $i++){
+				$grandchildren = $this->nodes[$children[$i]]->get_children();
+				if (count($grandchildren) == 1){
+					echo $currentNode ." has child ". $children[$i] ." that has a single child!\n"; //Debugging
+					$newChild = $grandchildren[0];
+					while (count($grandchildren) == 1){
+						$newChild = $grandchildren[0];
+						$grandchildren = $this->nodes[$newChild]->get_children();
+					}
+					$this->nodes[$inNode]->set_child($i, $newChild);
+				}
+			}
+			for($i = 0; $i<count($children); $i++){
+				$this->prune($children[$i]);
+			}
 		}
 	}
 

@@ -15,7 +15,6 @@ endfun
 #in y <- factorial(x)
 #give x " factorialized is " y
 
-
 fun sum3s(in n) as in
     if (n <= 0)
        toss 0
