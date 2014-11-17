@@ -9,7 +9,8 @@
 		private $index; //current index of array so that only the end is added onto
 		
 		//methods
-		public function __construct(){
+		public function __construct($input){
+			$this->token=$input;
 			$this->index=0;
 		}
 		public function addChild($input){ //input is the index from the tree object where the child is
@@ -34,6 +35,28 @@
 			$this->tokenArray = $input;
 		}
 		
+		public function __construct(){
+			$this->index=0;
+		}
+
+		public function addNode($inNode){ 
+			$this->nodes[$this->index]=$inNode;
+			$this->index++;
+			//print_r($inNode);  //Debugging statement
+			//print_r($this->nodes); //Debugging statement
+		}
+
+		public function get_index(){
+			return $this->index;
+		}
+
+		public function set_index($input){
+			$this->index = $input;
+		}
+
+		public function get_nodes(){
+			return $this->nodes;
+		}
 	}
 
 ?>

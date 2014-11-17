@@ -1,25 +1,35 @@
 <?php
 
-	//require("astGen.php")
+	//require("astGen.php");
 
 	class Parser{
 		private $tokens;
 		private $index;
 		private $lookahead;
 		private $lineNum;
-		//private $astGen; //abstract syntax tree generator
+		private $astGenerator; //abstract syntax tree generator
 
-		public function __construct($arr){
+		public function __construct($arr, $astIn){
 			$this->tokens = $arr;
 			$this->index = 0;
 			$this->lineNum = 1;
 			$this->lookahead = $this->tokens[$this->index];
+            $this->astGenerator = $astIn;
+            //print_r($this->astGenerator->get_tokenArray()); //Debugging statement
 		}
 
 		private function pushLookahead(){
 			$this->index+=1;
 			$this->lookahead=$this->tokens[$this->index];
 		}
+
+        private function addNodesToAst($token, $parentIndex, $currentIndex){ //function to add nodes into the ast. Pass in the token name and parent index and it'll do the rest.
+            $newNode = new Node ($token); //Create new node
+            $this->astGenerator->addNode($newNode); //Adds node to tree
+            $nodes = $this->astGenerator->get_nodes(); 
+            $nodes[$parentIndex]->addChild($currentIndex); //Link parent and new node
+            //print_r($nodes); //Debugging statement
+        }
 
 		private function matchNT($array){ 	//match function forces only one possibility, so for multiple rules and not a terminal, use this one , stands for matchNonTerminal
 			$hasMatch=false;
@@ -43,11 +53,13 @@
 			}
 		}
 
-		private function match($matchTo){
+		private function match($matchTo, $parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
 			if($matchTo!=$this->lookahead){
 				exit("Error on line ".$this->lineNum.": could not match token ".$this->lookahead.", expected ".$matchTo."\n");
 			}
 			else{
+                $this->addNodesToAst($matchTo, $parentIndex, $currentIndex);
 				//echo("I matched a ".$matchTo." on line ".$this->lineNum."\n");
 				if($matchTo=="<endl>"){
 					$this->lineNum+=1;
@@ -61,187 +73,281 @@
 		public function parse(){
 			$this->program();
 			echo("Parsing completed successfully! Good job at writing Ramsey!\n");
+            //print_r($this->astGenerator->get_nodes()); //To see the entire tree (Not recommended as it'll blow up your terminal)
+            //print_r($this->astGenerator->get_nodes()[0]); //Change the index to see individual nodes
 		}
 
 		private function program(){
+            $currentIndex = $this->astGenerator->get_index();
+            $newNode = new Node("<program>");
+            $this->astGenerator->addNode($newNode);
 			$case=$this->matchNT(array("<fun>", "<endl>")); //there is only one option in array, so no need to check the location of match in the array
             if($case==0){
-                $this->toplvlstmts();
+                //$this->addNodesToAst("<toplvlstmts>", $parentIndex, $currentIndex);
+                $this->toplvlstmts($currentIndex);
             }
             else if ($case==1){
-                $this->match("<endl>");
-                $this->program();
+                //$this->addNodesToAst("<endl>", $parentIndex, $currentIndex);
+                $this->match("<endl>", $currentIndex);
+                //$this->addNodesToAst("<program>", $parentIndex, $currentIndex);
+                $this->program($currentIndex);
             }
 		}
 
-		private function toplvlstmts(){
+		private function toplvlstmts($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<toplvlstmts>", $parentIndex, $currentIndex);
 			$case=$this->matchNT(array("<fun>","<endl>", "<$>"));
 			if($case>=0&&$case<=1){
-			$this->toplvlstmt();
-			$this->match("<endl>");
-			$this->toplvlstmts();
+            //$this->addNodesToAst("<toplvlstmt>", $parentIndex, $currentIndex);
+			$this->toplvlstmt($currentIndex);
+            //$this->addNodesToAst("<endl>", $parentIndex, $currentIndex);
+			$this->match("<endl>", $currentIndex);
+            //$this->addNodesToAst("<toplvlstmt>", $parentIndex, $currentIndex);
+			$this->toplvlstmts($currentIndex);
 			}
-			else if($case==1){
+			else if($case==2){
+                $this->match("<$>", $currentIndex);
 				//were done!
 			}
 			
 		}
 
-		private function toplvlstmt(){
+		private function toplvlstmt($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<toplvlstmt>", $parentIndex, $currentIndex);
 			$case=$this->matchNT(array("<fun>", "<endl>"));
 			if($case==0){
-				$this->match("<fun>");
-				$this->match("<ident>");
-				$this->match("<l_paren>");
-				$this->params();
-				$this->match("<r_paren>");
-				$this->match("<as>");
-				$this->type();
-				$this->match("<endl>");
-				$this->stmts();
-				$this->match("<endfun>");
+                //$this->addNodesToAst("<fun>", $parentIndex, $currentIndex);
+				$this->match("<fun>", $currentIndex);
+                //$this->addNodesToAst("<ident>", $parentIndex, $currentIndex);
+				$this->match("<ident>", $currentIndex);
+                //$this->addNodesToAst("<lparen>", $parentIndex, $currentIndex);
+				$this->match("<l_paren>", $currentIndex);
+                //$this->addNodesToAst("<params>", $parentIndex, $currentIndex);
+				$this->params($currentIndex);
+                //$this->addNodesToAst("<rparen>", $parentIndex, $currentIndex);
+				$this->match("<r_paren>", $currentIndex);
+                //$this->addNodesToAst("<as>", $parentIndex, $currentIndex);
+				$this->match("<as>", $currentIndex);
+                //$this->addNodesToAst("<type>", $parentIndex, $currentIndex);
+				$this->type($currentIndex);
+                //$this->addNodesToAst("<endl>", $parentIndex, $currentIndex);
+				$this->match("<endl>", $currentIndex);
+                //$this->addNodesToAst("<stmts>", $parentIndex, $currentIndex);
+				$this->stmts($currentIndex);
+                //$this->addNodesToAst("<endfun>", $parentIndex, $currentIndex);
+				$this->match("<endfun>", $currentIndex);
 			}
 			else if($case==1){
 				//do nothing
 			}
 		}
 		
-		private function params(){
+		private function params($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<params>", $parentIndex, $currentIndex);
 		    $case=$this->matchNT(array("<in_type>","<boo_type>","<big_type>","<small_type>","<ident>","<r_paren>"));
 		    if($case>=0&&$case<=4){
-		    	$this->param();
-		    	$this->paramlist();
+                //$this->addNodesToAst("<param>", $parentIndex, $currentIndex);
+		    	$this->param($currentIndex);
+                //$this->addNodesToAst("<paramlist>", $parentIndex, $currentIndex);
+		    	$this->paramlist($currentIndex);
 		    }
 		    else if($case==5){
 		    	//empty, let it return
 		    }
 		}
         
-        private function paramlist(){
+        private function paramlist($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<paramlist>", $parentIndex, $currentIndex);
 	        $case=$this->matchNT(array("<comma>","<r_paren>"));
 	        if($case==0){
-	        	$this->match("<comma>");
-	        	$this->params();
+                //$this->addNodesToAst("<comma>", $parentIndex, $currentIndex);
+	        	$this->match("<comma>", $currentIndex);
+                //$this->addNodesToAst("<params>", $parentIndex, $currentIndex);
+	        	$this->params($currentIndex);
 	        }
 	        else if($case==1){
 	        	//don't match, let it return
 	        }
 		}
         
-        private function param(){
-		   $case=$this->matchNT(array("<in_type>","<boo_type>","<big_type>","<small_type>","<ident>","<literal>","<true>","<false>","<not_op>","<r_paren>"));
+        private function param($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<param>", $parentIndex, $currentIndex);
+		    $case=$this->matchNT(array("<in_type>","<boo_type>","<big_type>","<small_type>","<ident>","<literal>","<true>","<false>","<not_op>","<r_paren>"));
 		    if($case>=0&&$case<=3){
-		    	$this->type();
-		    	$this->match("<ident>");
+                //$this->addNodesToAst("<type>", $parentIndex, $currentIndex);
+		    	$this->type($currentIndex);
+                //$this->addNodesToAst("<ident>", $parentIndex, $currentIndex);
+		    	$this->match("<ident>", $currentIndex);
 		    }
 		    else if($case>=4&&$case<=9){
-		    	$this->topexpression();
+                //$this->addNodesToAst("<topexpression>", $parentIndex, $currentIndex);
+		    	$this->topexpression($currentIndex);
 		    }
 		}
         
-        private function stmts(){
+        private function stmts($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<stmts>", $parentIndex, $currentIndex);
         	$case=$this->matchNT(array("<if>", "<while>", "<ident>", "<in_type>", "<boo_type>", "<big_type>", "<small_type>" ,"<literal>","<true>", "<false>", "<not_op>", "<l_paren>", "<toss>", "<endl>", "<endfun>", "<endwhile>", "<endif>", "<elf>", "<else>"));
 			if($case>=0&&$case<=13){
-			$this->stmt();
-			$this->match("<endl>");
-			$this->stmts();
+            //$this->addNodesToAst("<stmt>", $parentIndex, $currentIndex);
+			$this->stmt($currentIndex);
+            //$this->addNodesToAst("<endl>", $parentIndex, $currentIndex);
+			$this->match("<endl>", $currentIndex);
+            //$this->addNodesToAst("<stmts>", $parentIndex, $currentIndex);
+			$this->stmts($currentIndex);
 			}
  			else if($case>=14&&$case<=18){
  				//goes to empty str, do nothing
  			}
 		}
 
-        private function stmt(){
+        private function stmt($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<stmt>", $parentIndex, $currentIndex);
 			$case=$this->matchNT(array("<if>","<while>","<toss>","<ident>","<in_type>","<big_type>","<small_type>","<boo_type>","<endl>"));
 			if($case>=0&&$case<=1){
-				$this->conditional();
+                //$this->addNodesToAst("<conditional>", $parentIndex, $currentIndex);
+				$this->conditional($currentIndex);
 			}
 			else if($case==2){
-				$this->match("<toss>");
-				$this->topexpression();
+                //$this->addNodesToAst("<toss>", $parentIndex, $currentIndex);
+				$this->match("<toss>", $currentIndex);
+                //$this->addNodesToAst("<topexpression>", $parentIndex, $currentIndex);
+				$this->topexpression($currentIndex);
 			}
 			else if($case>=3&&$case<=7){
-				$this->varhandler();
+                //$this->addNodesToAst("<varhandler>", $parentIndex, $currentIndex);
+				$this->varhandler($currentIndex);
 			}
 			else if($case==8){
 				//nothing, command goes to empty
 			}
         }
         
-        private function varhandler(){
+        private function varhandler($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<varhandler>", $parentIndex, $currentIndex);
         	$case=$this->matchNT(array("<ident>","<in_type>","<big_type>","<small_type>","<boo_type>"));
         	if($case==0){
-        		$this->match("<ident>");
-        		$this->assignment();
+                //$this->addNodesToAst("<ident>", $parentIndex, $currentIndex);
+        		$this->match("<ident>", $currentIndex);
+                //$this->addNodesToAst("<assignment>", $parentIndex, $currentIndex);
+        		$this->assignment($currentIndex);
         	}
         	else if($case>=1&&$case<=4){
-        		$this->declaration();
-        		$this->catassign();
+                //$this->addNodesToAst("<declaration>", $parentIndex, $currentIndex);
+        		$this->declaration($currentIndex);
+                //$this->addNodesToAst("<catassign>", $parentIndex, $currentIndex);
+        		$this->catassign($currentIndex);
         	}
         }
         
-        private function declaration(){
+        private function declaration($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<declaration>", $parentIndex, $currentIndex);
             $case=$this->matchNT(array("<in_type>","<big_type>","<small_type>","<boo_type>"));
             if($case>=0&&$case<=3){
-                $this->type();
-            	$this->match("<ident>");
+                //$this->addNodesToAst("<type>", $parentIndex, $currentIndex);
+                $this->type($currentIndex);
+                //$this->addNodesToAst("<ident>", $parentIndex, $currentIndex);
+            	$this->match("<ident>", $currentIndex);
         	}
         }
         
-        private function assignment(){
+        private function assignment($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<assignment>", $parentIndex, $currentIndex);
         	$case=$this->matchNT(array("<assign_op>"));
         	if($case==0){
-        		$this->match("<assign_op>");
-        		$this->topexpression();
+                //$this->addNodesToAst("<assign_op>", $parentIndex, $currentIndex);
+        		$this->match("<assign_op>", $currentIndex);
+                //$this->addNodesToAst("<topexpression>", $parentIndex, $currentIndex);
+        		$this->topexpression($currentIndex);
         	}
         }
         
-        private function catassign(){
+        private function catassign($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<catassign>", $parentIndex, $currentIndex);
         	$case=$this->matchNT(array("<assign_op>","<endl>"));
         	if($case==0){
-        		$this->assignment();
+                //$this->addNodesToAst("<assignment>", $parentIndex, $currentIndex);
+        		$this->assignment($currentIndex);
         	}
         	else if($case==1){
         		//do nothing, goes to empty
         	}
         }
 
-        private function conditional(){
+        private function conditional($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<conditional>", $parentIndex, $currentIndex);
         	$case=$this->matchNT(array("<if>","<while>"));
         	if($case==0){
-        		$this->match("<if>");
-        		$this->match("<l_paren>");
-        		$this->topexpression();
-        		$this->match("<r_paren>");
-        		$this->match("<endl>");
-        		$this->stmts();
-        		$this->elfears();
-        		$this->match("<endif>");
+                //$this->addNodesToAst("<if>", $parentIndex, $currentIndex);
+        		$this->match("<if>", $currentIndex);
+                //$this->addNodesToAst("<l_paren>", $parentIndex, $currentIndex);
+        		$this->match("<l_paren>", $currentIndex);
+                //$this->addNodesToAst("<topexpression>", $parentIndex, $currentIndex);
+        		$this->topexpression($currentIndex);
+                //$this->addNodesToAst("<r_paren>", $parentIndex, $currentIndex);
+        		$this->match("<r_paren>", $currentIndex);
+                //$this->addNodesToAst("<endl>", $parentIndex, $currentIndex);
+        		$this->match("<endl>", $currentIndex);
+                //$this->addNodesToAst("<stmts>", $parentIndex, $currentIndex);
+        		$this->stmts($currentIndex);
+                //$this->addNodesToAst("<elfears>", $parentIndex, $currentIndex);
+        		$this->elfears($currentIndex);
+                //$this->addNodesToAst("<endif>", $parentIndex, $currentIndex);
+        		$this->match("<endif>", $currentIndex);
         	}
         	else if($case==1){
-        		$this->match("<while>");
-        		$this->match("<l_paren>");
-        		$this->topexpression();
-        		$this->match("<r_paren>");
-        		$this->match("<endl>");
-        		$this->stmts();
-        		$this->match("<endwhile>");
+                //$this->addNodesToAst("<while>", $parentIndex, $currentIndex);
+        		$this->match("<while>", $currentIndex);
+                //$this->addNodesToAst("<l_paren>", $parentIndex, $currentIndex);
+        		$this->match("<l_paren>", $currentIndex);
+                //$this->addNodesToAst("<topexpression>", $parentIndex, $currentIndex);
+        		$this->topexpression($currentIndex);
+                //$this->addNodesToAst("<r_paren>", $parentIndex, $currentIndex);
+        		$this->match("<r_paren>", $currentIndex);
+                //$this->addNodesToAst("<endl>", $parentIndex, $currentIndex);
+        		$this->match("<endl>", $currentIndex);
+                //$this->addNodesToAst("<stmts>", $parentIndex, $currentIndex);
+        		$this->stmts($currentIndex);
+                //$this->addNodesToAst("<endwhile>", $parentIndex, $currentIndex);
+        		$this->match("<endwhile>", $currentIndex);
         	}
         }
         
-        private function elfears(){
+        private function elfears($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<elfears>", $parentIndex, $currentIndex);
         	$case=$this->matchNT(array("<elf>","<else>","<endif>"));
         	if($case==0){
-        		$this->match("<elf>");
-        		$this->match("<l_paren>");
-        		$this->topexpression();
-        		$this->match("<r_paren>");
-        		$this->stmts();
-        		$this->elfears();
+                //$this->addNodesToAst("<elf>", $parentIndex, $currentIndex);
+        		$this->match("<elf>", $currentIndex);
+                //$this->addNodesToAst("<l_paren>", $parentIndex, $currentIndex);
+        		$this->match("<l_paren>", $currentIndex);
+                //$this->addNodesToAst("<topexpression>", $parentIndex, $currentIndex);
+        		$this->topexpression($currentIndex);
+                //$this->addNodesToAst("<r_paren>", $parentIndex, $currentIndex);
+        		$this->match("<r_paren>", $currentIndex);
+                //$this->addNodesToAst("<stmts>", $parentIndex, $currentIndex);
+        		$this->stmts($currentIndex);
+                //$this->addNodesToAst("<elfears>", $parentIndex, $currentIndex);
+        		$this->elfears($currentIndex);
         	}
         	else if($case==1){
-        		$this->match("<else>");
-        		$this->stmts();
+                //$this->addNodesToAst("<else>", $parentIndex, $currentIndex);
+        		$this->match("<else>", $currentIndex);
+                //$this->addNodesToAst("<stmts>", $parentIndex, $currentIndex);
+        		$this->stmts($currentIndex);
         	}
         	else if($case==2){
         		//empty, do nothing
@@ -249,137 +355,193 @@
 
         }
         
-        private function topexpression(){
+        private function topexpression($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<topexpression>", $parentIndex, $currentIndex);
         	$case=$this->matchNT(array("<ident>","<literal>","<true>","<false>","<not_op>", "<l_paren>"));
         	if($case>=0&&$case<=4){
-        		$this->expression();
-        		$this->expressionlist();
+                //$this->addNodesToAst("<expression>", $parentIndex, $currentIndex);
+        		$this->expression($currentIndex);
+                //$this->addNodesToAst("<expressionlist>", $parentIndex, $currentIndex);
+        		$this->expressionlist($currentIndex);
         	}
         	else if($case==5){
-        		$this->match("<l_paren>");
-        		$this->expression();
-        		$this->expressionlist();
-        		$this->match("<r_paren>");
-        		$this->expressionlist();
+                //$this->addNodesToAst("<l_paren>", $parentIndex, $currentIndex);
+        		$this->match("<l_paren>", $currentIndex);
+                //$this->addNodesToAst("<expression>", $parentIndex, $currentIndex);
+        		$this->expression($currentIndex);
+                //$this->addNodesToAst("<expressionlist>", $parentIndex, $currentIndex);
+        		$this->expressionlist($currentIndex);
+                //$this->addNodesToAst("<r_paren>", $parentIndex, $currentIndex);
+        		$this->match("<r_paren>", $currentIndex);
+                //$this->addNodesToAst("<expressionlist>", $parentIndex, $currentIndex);
+        		$this->expressionlist($currentIndex);
         	}
         }
         
-        private function expressionlist(){
+        private function expressionlist($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<expressionlist>", $parentIndex, $currentIndex);
             $case=$this->matchNT(array("<add_op>","<sub_op>","<mult_op>","<div_op>","<mod_op>","<less_op>","<greater_op>","<lesseq_op>","<greateq_op>","<noteq_op>","<and_op>","<or_op>","<compare_op>","<endl>","<r_paren>"));
             if($case>=0&&$case<=12){
-            	$this->sop();
-            	$this->topexpression();
+                //$this->addNodesToAst("<sop>", $parentIndex, $currentIndex);
+            	$this->sop($currentIndex);
+                //$this->addNodesToAst("<topexpression>", $parentIndex, $currentIndex);
+            	$this->topexpression($currentIndex);
             }
             else if($case>=13&&$case<=14){
             	//empty, do nothing
             }
         }
         
-        private function expression(){
+        private function expression($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<expression>", $parentIndex, $currentIndex);
         	$case=$this->matchNT(array("<ident>","<literal>","<true>","<false>","<not_op>"));
         	if($case==0){
-        		$this->match("<ident>");
-        		$this->funcall();
+                //$this->addNodesToAst("<ident>", $parentIndex, $currentIndex);
+        		$this->match("<ident>", $currentIndex);
+                //$this->addNodesToAst("<funcall>", $parentIndex, $currentIndex);
+        		$this->funcall($currentIndex);
         	}
         	else if($case>=1&&$case<=3){
-        		$this->literals();
+                //$this->addNodesToAst("<literals>", $parentIndex, $currentIndex);
+        		$this->literals($currentIndex);
         	}
         	else if($case==4){
-        		$this->match("<not_op>");
-        		$this->match("<l_paren>");
-        		$this->topexpression();
-        		$this->match("<r_paren>");
+                //$this->addNodesToAst("<not_op>", $parentIndex, $currentIndex);
+        		$this->match("<not_op>", $currentIndex);
+                //$this->addNodesToAst("<l_paren>", $parentIndex, $currentIndex);
+        		$this->match("<l_paren>", $currentIndex);
+                //$this->addNodesToAst("<topexpression>", $parentIndex, $currentIndex);
+        		$this->topexpression($currentIndex);
+                //$this->addNodesToAst("<r_paren>", $parentIndex, $currentIndex);
+        		$this->match("<r_paren>", $currentIndex);
         	}
         }
         
-        private function funcall(){
+        private function funcall($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<funcall>", $parentIndex, $currentIndex);
         	$case=$this->matchNT(array("<l_paren>","<add_op>","<sub_op>","<mult_op>","<div_op>","<mod_op>","<less_op>","<greater_op>","<lesseq_op>","<greateq_op>","<noteq_op>","<and_op>","<or_op>","<compare_op>","<endl>", "<r_paren>"));
         	if($case==0){
-        		$this->match("<l_paren>");
-        		$this->params();
-        		$this->match("<r_paren>");
+                //$this->addNodesToAst("<l_paren>", $parentIndex, $currentIndex);
+        		$this->match("<l_paren>", $currentIndex);
+                //$this->addNodesToAst("<params>", $parentIndex, $currentIndex);
+        		$this->params($currentIndex);
+                //$this->addNodesToAst("<r_paren>", $parentIndex, $currentIndex);
+        		$this->match("<r_paren>", $currentIndex);
         	}
         	else if($case>=1&&$case<=15){
         		//do nothing
         	}
         }
         
-        private function sop(){
+        private function sop($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<sop>", $parentIndex, $currentIndex);
 			$case=$this->matchNT(array("<add_op>","<sub_op>","<mult_op>","<div_op>","<mod_op>","<less_op>","<greater_op>","<lesseq_op>","<greateq_op>","<noteq_op>","<and_op>","<or_op>","<compare_op>"));
 			if($case==0){
-				$this->match("<add_op>");
+                //$this->addNodesToAst("<add_op>", $parentIndex, $currentIndex);
+				$this->match("<add_op>", $currentIndex);
 			}
 			else if($case==1){
-				$this->match("<sub_op>");
+                //$this->addNodesToAst("<sub_op>", $parentIndex, $currentIndex);
+				$this->match("<sub_op>", $currentIndex);
 			}
 			else if($case>=2&&$case<=12){
-				$this->fop();
+                //$this->addNodesToAst("<fop>", $parentIndex, $currentIndex);
+				$this->fop($currentIndex);
 			}
         }
         
-        private function fop(){
+        private function fop($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<fop>", $parentIndex, $currentIndex);
         	$case=$this->matchNT(array("<mult_op>","<div_op>","<mod_op>","<less_op>","<greater_op>","<lesseq_op>","<greateq_op>","<noteq_op>","<and_op>","<or_op>","<compare_op>"));
         	if($case==0){
-        		$this->match("<mult_op>");
+                //$this->addNodesToAst("<mult_op>", $parentIndex, $currentIndex);
+        		$this->match("<mult_op>", $currentIndex);
         	}
         	if($case==1){
-        		$this->match("<div_op>");
+                //$this->addNodesToAst("<div_op>", $parentIndex, $currentIndex);
+        		$this->match("<div_op>", $currentIndex);
         	}
         	if($case==2){
-        		$this->match("<mod_op>");
+                //$this->addNodesToAst("<mod_op>", $parentIndex, $currentIndex);
+        		$this->match("<mod_op>", $currentIndex);
         	}
         	if($case==3){
-        		$this->match("<less_op>");
+                //$this->addNodesToAst("<less_op>", $parentIndex, $currentIndex);
+        		$this->match("<less_op>", $currentIndex);
         	}
         	if($case==4){
-        		$this->match("<greater_op>");
+                //$this->addNodesToAst("<greater_op>", $parentIndex, $currentIndex);
+        		$this->match("<greater_op>", $currentIndex);
         	}
         	if($case==5){
-        		$this->match("<lesseq_op>");
+                //$this->addNodesToAst("<lesseq_op>", $parentIndex, $currentIndex);
+        		$this->match("<lesseq_op>", $currentIndex);
         	}
         	if($case==6){
-        		$this->match("<greateq_op>");
+                //$this->addNodesToAst("<greateq_op>", $parentIndex, $currentIndex);
+        		$this->match("<greateq_op>", $currentIndex);
         	}
         	if($case==7){
-        		$this->match("<noteq_op>");
+                //$this->addNodesToAst("<noteq_op>", $parentIndex, $currentIndex);
+        		$this->match("<noteq_op>", $currentIndex);
         	}
         	if($case==8){
-        		$this->match("<and_op>");
+                //$this->addNodesToAst("<and_op>", $parentIndex, $currentIndex);
+        		$this->match("<and_op>", $currentIndex);
         	}
         	if($case==9){
-        		$this->match("<or_op>");
+                //$this->addNodesToAst("<or_op>", $parentIndex, $currentIndex);
+        		$this->match("<or_op>", $currentIndex);
         	}
         	if($case==10){
-        		$this->match("<compare_op>");
+                //$this->addNodesToAst("<compare_op>", $parentIndex, $currentIndex);
+        		$this->match("<compare_op>", $currentIndex);
         	}
         }
         
-        private function literals(){
+        private function literals($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<literals>", $parentIndex, $currentIndex);
         	$case=$this->matchNT(array("<literal>","<true>","<false>"));
         	if($case==0){
-        		$this->match("<literal>");
+                //$this->addNodesToAst("<literal>", $parentIndex, $currentIndex);
+        		$this->match("<literal>", $currentIndex);
         	}
         	if($case==1){
-        		$this->match("<true>");
+                //$this->addNodesToAst("<true>", $parentIndex, $currentIndex);
+        		$this->match("<true>", $currentIndex);
         	}
         	if($case==2){
-        		$this->match("<false>");
+                //$this->addNodesToAst("<false>", $parentIndex, $currentIndex);
+        		$this->match("<false>", $currentIndex);
         	}
         }
         
-        private function type(){
+        private function type($parentIndex){
+            $currentIndex = $this->astGenerator->get_index();
+            $this->addNodesToAst("<type>", $parentIndex, $currentIndex);
             $case=$this->matchNT(array("<in_type>","<boo_type>","<big_type>","<small_type>"));
             if($case==0){
-            	$this->match("<in_type>");
+                //$this->addNodesToAst("<in_type>", $parentIndex, $currentIndex);
+            	$this->match("<in_type>", $currentIndex);
             }
             else if($case==1){
-            	$this->match("<boo_type>");
+                //$this->addNodesToAst("<boo_type>", $parentIndex, $currentIndex);
+            	$this->match("<boo_type>", $currentIndex);
             }
            else if($case==2){
-            	$this->match("<big_type>");
+                //$this->addNodesToAst("<big_type>", $parentIndex, $currentIndex);
+            	$this->match("<big_type>", $currentIndex);
             }
             else if($case==3){
-            	$this->match("<small_type>");
+                //$this->addNodesToAst("<small_type>", $parentIndex, $currentIndex);
+            	$this->match("<small_type>", $currentIndex);
             }
         }
         //Done!
