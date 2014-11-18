@@ -32,7 +32,11 @@
 			    | ε
 
 //new expression grammar
-<topexpression>   -> <or-expression>
+<topexpression>   -> <not-expression>
+
+<not-expression>   -> <or-expression> <not-opition-expression>
+<not-opition-expression>   -> <NOT> <(> <or-expression> <not-opition-expression> <)>
+                           | ε
 <or-expression>   -> <and-expression> <or-opition-expression>
 <or-opition-expression>   -> <OR> <and-expression> <or-opition-expression>
                            | ε
@@ -61,7 +65,7 @@
 <expression>   	-> <ident> <funcall>
 				| <literals>
                                 | (<topexpression>)
-				| NOT (<topexpression>)
+				
 //new expression grammar
 
 <funcall>       -> ( <params> )
