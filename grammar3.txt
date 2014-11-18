@@ -1,0 +1,103 @@
+### Grammar for the programming language Ramsey.
+## Add all productions in their respective terminals, put undecided productions and terminals beyond the line.
+
+<program> 	   	-> <top_lvl_stmts>
+<top_lvl_stmts> 	-> <top_lvl_stmt> <endl> <top_lvl_stmts>
+				| ε
+<top_lvl_stmt>		-> fun <ident> (<params>) as <type> <endl> <stmts> endfun
+				| ε
+<params>	   	-> <param> <paramlist>
+			   	| ε
+<paramlist>		-> <comma> <params>
+				| ε
+<param>		   	-> <type> <ident>
+				| <topexpression> 
+<stmts>		   	-> <stmt> <endl> <stmts>
+				| ε
+
+<stmt>		   	-> <conditional>
+				| ε
+				| toss <topexpression>
+				| <varhandler>
+<varhandler>  -> <ident> <assignment>
+        | <declaration> <catassign>
+<declaration>		-> <type> <ident>
+<assignment>	-> <- <topexpression>
+<catassign>   -> <assignment>
+        | ε
+<conditional>  	-> if (<topexpression>) <endl> <stmts> <elfears> endif
+			    | while (<topexpression>) \n <stmts> endwhile
+<elfears>	   	-> elf ( <topexpression> ) <stmts> <elfears>
+			    | else <stmts>
+			    | ε
+
+//new expression grammar
+<topexpression>   -> <or-expression>
+<or-expression>   -> <and-expression> <or-opition-expression>
+<or-opition-expression>   -> <OR> <and-expression> <or-opition-expression>
+                           | ε
+<and-expression> -> <relational—op-expression> <and-opition-expression>
+<and-opition-expression>   -> <AND> <relational—op-expression> <and-opition-expression>
+                           | ε
+<relational—op-expression>   -> <add-sub-expression> <relational—op—opition-expression> 
+<relational—op—opition-expression>   -> “ < “ <add-sub-expression> <relational—op—opition-expression>
+				| “ > ” <add-sub-expression> <relational—op—opition-expression>
+				| “ <= “ <add-sub-expression> <relational—op—opition-expression>
+				| “ >= “ <add-sub-expression> <relational—op—opition-expression>
+                                | “ = “ <add-sub-expression> <relational—op—opition-expression>
+				| “!= “ <add-sub-expression> <relational—op—opition-expression>
+                                | ε
+<add-sub-expression>   -> <mul—div-expression> <add-sub-opition-expression>
+<add-sub-opition-expression>   -> “+” <mul—div-expression> <add-sub-opition-expression>
+                                | “-” <mul—div-expression> <add-sub-opition-expression>
+                                | ε
+
+<mul—div-expression>   -> <expression> <mul—div-opition-expression>
+<mul—div-opition-expression>   -> “*”
+                                |“*” <expression> <mul—div-opition-expression>
+                                |”/“ <expression> <mul—div-opition-expression>
+                                | ε
+
+<expression>   	-> <ident> <funcall>
+				| <literals>
+                                | (<topexpression>)
+				| NOT (<topexpression>)
+//new expression grammar
+
+<funcall>       -> ( <params> )
+        | ε
+//I don’t think we need this anymore
+<fop>			-> *
+				|  /
+				|  %
+				|  <
+				|  >
+				|  <=
+				|  >=
+				|  =
+				|  !=
+				| AND
+				| OR
+<sop>     -> +
+        | -
+        | <fop>
+//I don’t think we need this anymore
+
+<literals>		-> <literal>
+				|  <true>
+				|  <false>
+<literal> 		-> <digit><digit>*
+<ident>			-> <letter><letter|digit|underscore>*
+<type>			-> in
+				| boo
+				| big
+				| small
+#################### PUT UNSURE PRODUCTIONS AND TERMINALS BEYOND HERE ########################################
+
+
+
+
+
+#################### PUT LOGICAL FLAWS WITH RAMSEY BEYOND HERE ########################################
+## PROBLEM #1 ##
+

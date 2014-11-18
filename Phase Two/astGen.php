@@ -28,6 +28,7 @@
 	class ast{
 		private $nodes; //array of nodes, root is always at 0
 		private $index; //current end for adding to
+<<<<<<< Updated upstream
 		private $tokenArray;
 
 		public function get_tokenArray(){
@@ -37,6 +38,10 @@
 		public function set_tokenArray($input){
 			$this->tokenArray = $input;
 		}
+=======
+        
+        
+>>>>>>> Stashed changes
 		
 		public function __construct(){
 			$this->index=0;
