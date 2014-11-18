@@ -67,7 +67,7 @@
 			for($i = 0; $i<count($children); $i++){
 				$grandchildren = $this->nodes[$children[$i]]->get_children();
 				if (count($grandchildren) == 1){
-					echo $currentNode ." has child ". $children[$i] ." that has a single child!\n"; //Debugging
+					//echo $currentNode ." has child ". $children[$i] ." that has a single child!\n"; //Debugging
 					$newChild = $grandchildren[0];
 					while (count($grandchildren) == 1){
 						$newChild = $grandchildren[0];

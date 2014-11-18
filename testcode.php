@@ -1,12 +1,15 @@
 <?php
-/*
-$matchTo='/^[a-zA-Z]\w*$/';		//currently assuming that a number literal CANNOT begin with a decimal
-if(preg_match($matchTo, "fun ")!=1)
-	echo "FAILED!\n";
-else
-	echo "PASSED\n";
 
-echo '"arg"';
-*/
-echo strlen("fact");
+$arr=array("a","b","c","d");
+unset($arr[2]);
+foreach($arr as $key=>$val){
+	echo("entry ".$key." is ".$val."\n");
+}
+//echo($tab->set_symbol("x", "bark"));
+//echo($tab->get_symbol("a")."\n");
+
+
+//if(array_key_exists("x", $arr[0])){   
+	//echo("inside x\n");
+
 ?>
