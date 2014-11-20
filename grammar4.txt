@@ -32,49 +32,39 @@
 			    | ε
 
 //new expression grammar
-<topexpression>   -> <not-expression>
+<topexpression>   -> <relational—op-expression>
 
-<not-expression>   -> <or-expression> <not-opition-expression>
-<not-opition-expression>   -> <NOT> <(> <or-expression> <not-opition-expression> <)>
-                           | ε
-<or-expression>   -> <and-expression> <or-opition-expression>
-<or-opition-expression>   -> <OR> <and-expression> <or-opition-expression>
-                           | ε
-<and-expression> -> <relational—op-expression> <and-opition-expression>
-<and-opition-expression>   -> <AND> <relational—op-expression> <and-opition-expression>
-                           | ε
+
 <relational—op-expression>   -> <add-sub-expression> <relational—op—opition-expression> 
-<relational—op—opition-expression>   -> “ < “ <add-sub-expression> <relational—op—opition-expression>
-				| “ > ” <add-sub-expression> <relational—op—opition-expression>
-				| “ <= “ <add-sub-expression> <relational—op—opition-expression>
-				| “ >= “ <add-sub-expression> <relational—op—opition-expression>
-                                | “ = “ <add-sub-expression> <relational—op—opition-expression>
-				| “!= “ <add-sub-expression> <relational—op—opition-expression>
+<relational—op—opition-expression>   -> <top> <add-sub-expression> <relational—op—opition-expression>
                                 | ε
+
 <add-sub-expression>   -> <mul—div-expression> <add-sub-opition-expression>
-<add-sub-opition-expression>   -> “+” <mul—div-expression> <add-sub-opition-expression>
-                                | “-” <mul—div-expression> <add-sub-opition-expression>
+<add-sub-opition-expression>         -> <sop> <mul—div-expression> <add-sub-opition-expression>
                                 | ε
 
 <mul—div-expression>   -> <expression> <mul—div-opition-expression>
-<mul—div-opition-expression>   ->
-                                |“*” <expression> <mul—div-opition-expression>
-                                |”/“ <expression> <mul—div-opition-expression>
+<mul—div-opition-expression>         -> <fop> <expression> <mul—div-opition-expression>
                                 | ε
 
 <expression>   	-> <ident> <funcall>
 				| <literals>
                                 | (<topexpression>)
+                                | NOT (<topexpression>)
 				
 //new expression grammar
 
 <funcall>       -> ( <params> )
         | ε
-//I don’t think we need this anymore
+
 <fop>			-> *
 				|  /
 				|  %
-				|  <
+
+<sop>                   -> +
+                                | -
+                        
+<top>                   -> <
 				|  >
 				|  <=
 				|  >=
@@ -82,10 +72,7 @@
 				|  !=
 				| AND
 				| OR
-<sop>     -> +
-        | -
-        | <fop>
-//I don’t think we need this anymore
+                       
 
 <literals>		-> <literal>
 				|  <true>

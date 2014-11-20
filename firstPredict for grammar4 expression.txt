@@ -1,0 +1,65 @@
+First (<topexpression>): { NOT,<letter>, <digit>, true, false, ( }
+First(<relational—op-expression>): {  NOT,<letter>, <digit>, true, false, ( }
+First(<relational—op-opition-expression>): { < ,>, <=, >=, =, !=, AND, OR }
+First(<add-sub-expression>): {  NOT,<letter>, <digit>, true, false, ( }
+First(<add-sub-opition-expression>): { +, - }
+First(mul—div-expression): {  NOT,<letter>, <digit>, true, false, ( }
+First(<mul—div-opition-expression>): { *, / , %}
+First (<expression>): { NOT,<letter>, <digit>, true, false, ( }
+
+First (<fop>): { *, / , %}
+First (<sop>): { +, - }
+First (<top>): { < ,>, <=, >=, =, !=, AND, OR }
+
+
+
+
+\————————————————————————————————————————————————
+
+------------------------------------------------------------------------------------------------
+
+Predict (<topexpression> -> <relational—op-expression>): { NOT,<letter>, <digit>, true, false, ( }
+
+Predict (<relational—op-expression> -> <add-sub-expression> <relational—op—opition-expression> ):{ NOT,<letter>, <digit>, true, false, ( }
+
+Predict (<relational—op—opition-expression> -> <top> <add-sub-expression> <relational—op—opition-expression>): { < ,>, <=, >=, =, !=, AND, OR }
+
+Predict (<relational—op—opition-expression> -> λ ): { <endl>, elf, endwhile , endfun, else, endif, <r_paren> }
+
+Predict (<add-sub-expression> -> <mul—div-expression> <add-sub-opition-expression>): { NOT,<letter>, <digit>, true, false, ( }
+
+Predict (<add-sub-opition-expression> -> <sop> <mul—div-expression> <add-sub-opition-expression> ): { +, - }
+
+Predict (<add-sub-opition-expression> -> λ ): { <endl>, elf, endwhile , endfun, else, endif, <r_paren> }
+
+Predict (<mul—div-expression> -> <expression> <mul—div-opition-expression>):{ NOT,<letter>, <digit>, true, false, ( }
+
+Predict (<mul—div-opition-expression> -> <fop> <expression> <mul—div-opition-expression> ): { *, / , % }
+
+Predict (<mul—div-opition-expression> -> λ ): { <endl>, elf, endwhile , endfun, else, endif, <r_paren> }
+
+Predict (<mul—div-expression> -> <expression> <mul—div-opition-expression>): { <ident> }
+Predict (<expression> -> <literals>): { <literal>, <true>, <false> }
+Predict (<expression> -> (<topexpression>)): { ( }
+Predict (<expression> -> NOT (<topexpression>)): { NOT }
+
+Predict (<sop>-> +): { + }
+Predict (<sop>-> -): { - }
+Predict (<fop>-> *): { * }
+Predict (<fop>-> /): { / }
+Predict (<fop>-> %): { % }
+Predict (<top>-> <): { < }
+Predict (<top>-> >): { > }
+Predict (<top>-> <=): { <= }
+Predict (<top>-> >=): { >= }
+Predict (<top>-> =): { = }
+Predict (<top>-> !=): { != }
+Predict (<top>-> AND): { AND }
+Predict (<top>-> OR): { OR }
+
+
+
+
+
+
+
