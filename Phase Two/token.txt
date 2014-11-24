@@ -1,16 +1,2 @@
-<fun>
-<ident>
-<l_paren>
-<in_type>
-<ident>
-<r_paren>
-<as>
-<in_type>
-<endl>
-<toss>
-<ident>
-<endl>
-<endfun>
-<endl>
 <endl>
 <$>

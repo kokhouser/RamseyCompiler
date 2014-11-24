@@ -1,3 +1,47 @@
-fun factorial(in x) as in
+ fun factorial(in x) as in
+
+	if (x = 1)
+		toss x
+	else
+		toss (x * factorial (x-1))
+	endif
+
+endfun
+
+#Remove following comment symbols to see the parser gripe at you!
+#in x
+#give "Enter number to be factorialized."
+#take x
+#in y <- factorial(x)
+#give x " factorialized is " y
+
+fun sum3s(in n) as in
+    if (n <= 0)
+       toss 0
+    endif
+
+    in thing <- n mod 3
+
+    if (thing = 0)
+       # n is and will remain a multiple of 3
+       toss n + sum3s(n-3)
+    endif
+
+    # n will be some multiple of 3 from now on...
+    toss sum3s(n-thing)
+endfun
+
+fun sum3s_alt(in n) as in
+    # base case
+    if (n <= 0)
+       toss 0
+    endif
+
+    # n may or may not be a multiple of 3
+    n <- 3*(n / 3)
+    # now n is some multiple of 3
+
+    # recursive call
+    toss n + sum3s_alt(n)
 toss x
 endfun
