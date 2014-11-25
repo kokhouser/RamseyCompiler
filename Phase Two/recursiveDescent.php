@@ -2,7 +2,6 @@
 
 /*
     Parser for the simple, but non-trivial language Ramsey. 
-    Hand-crafted out of love and pain (mostly) by Hao Zhe Kok (Houser)
 */
 
 	//require("astGen.php");
