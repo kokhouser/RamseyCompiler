@@ -21,10 +21,10 @@ class Symtab{
 	}
 
 	public function closeScope(){	// signifies end of life for declarations in current scope, therefore symbols are no longer needed and are deleted
-
-		while($this->symbolTable[$this->currentIndex-1]["depth"]==$this->currentScope){
-			$this->currentIndex--;
-			unset($this->symbolTable[$this->currentIndex]);
+		$location = $this->currentIndex - 1;
+		while($this->symbolTable[$location]["depth"]==$this->currentScope){
+			$this->symbolTable[$location]["live"]=false;
+			$location--;
 		}
 		$this->currentScope--;
 	}
@@ -33,7 +33,7 @@ class Symtab{
 		$trackScope =0;
 		$trackLoc = -1;
 		foreach($this->symbolTable as $key => $row){
-			if($row["name"]==$inName){					//found a match of name
+			if($row["name"]==$inName && $row["live"]){					//found a live match of name
 				if($row["depth"]==$this->currentScope){ // check if match is in current scope
 					if($decl){
 						exit("Variable ".$inName." is declared incorrectly\n");
@@ -42,7 +42,7 @@ class Symtab{
 						return $key;
 					}
 				}
-				//if we match but are out of scope, we would want to set the most local scope
+				//if we match to a live version but are out of scope, we would want to set the most local scope
 				else if($trackScope<=$row["depth"]){
 					$trackScope = $row["depth"];
 					$trackLoc = $key;
@@ -50,7 +50,7 @@ class Symtab{
 			}
 		}
 		if($trackLoc== -1 && $decl==false){
-			exit("Variable ".$inName." has not been declared\n");
+			exit("Variable ".$inName." has not been declared in an accessible scope\n");
 		}
 		return $trackLoc;
 
@@ -62,9 +62,10 @@ class Symtab{
 			$location=$this->currentIndex;	//to add onto the tail of the "list"
 			$this->currentIndex++;
 			$this->symbolTable[$location] = array(); //only make new array if adding to the array
-			// each row is an array (map thanks to php), holding keys: name, depth, and data, where data is type and any info associated (not variable values, however)
+			// each row is an array (map thanks to php), holding keys: name, depth, live, and data, where data is type and any info associated (not variable values, however), and live is if 
 			$this->symbolTable[$location]["name"]=$inName; 		
 			$this->symbolTable[$location]["depth"]=$this->currentScope;
+			$this->symbolTable[$location]["live"]=true;
 		}
 		//else, location is the index where we want to change the data
 		$this->symbolTable[$location]["data"]=$inData;
@@ -89,6 +90,11 @@ class Symtab{
 		else{
 			return $trackData;	//we wanted type/info, so that's what is returned
 		}
+	}
+
+	public function printSelf(){
+		foreach($this->symbolTable as $key => $row){
+			echo("variable ".$key." is named '".$row["name"]."', at depth ".$row["depth"].", and holds the type ".$row["data"].".\n");
 	}
 }
 
