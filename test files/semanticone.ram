@@ -1,0 +1,4 @@
+fun foo(in x, in y){
+	if(x=true)
+		toss 7
+}
