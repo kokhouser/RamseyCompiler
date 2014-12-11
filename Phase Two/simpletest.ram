@@ -1,0 +1,7 @@
+fun addone(in x) as in
+	toss x+1
+endfun
+
+fun addtwo(in x) as in
+	toss x+2
+endfun

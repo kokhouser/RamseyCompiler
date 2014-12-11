@@ -23,12 +23,32 @@
 		public function set_child($currentIndex, $newChildIndex){
 			$this->children[$currentIndex] = $newChildIndex;
 		}
+
+		public function output_code(&$codeStream){
+			//$codeStream.=$this->token.="\n";
+			if ($this->token=="<fun>"){
+				$codeStream.="GLOBAL placeholder(replace with function name) \nplaceholder: \n 	push ebp \n 	mov ebp,esp\n 	push ebx\n";
+			}
+			else if ($this->token=="<toss>"){
+				//TO DO - Move return value to eax
+				$codeStream.="	pop ebx \n 	pop ebp \n 	ret\n";
+			}
+			else{
+				//$codeStream.=$this->token.="\n";
+			}
+			//echo $codeStream;
+		}
 	}
 
 	class ast{
 		private $nodes; //array of nodes, root is always at 0
 		private $index; //current end for adding to
 		private $tokenArray;
+		private $code;
+
+		public function getCode(){
+			return $this->code;
+		}
 
 		public function get_tokenArray(){
 			return $this->tokenArray;
@@ -74,11 +94,21 @@
 						$grandchildren = $this->nodes[$newChild]->get_children();
 					}
 					$this->nodes[$inNode]->set_child($i, $newChild);
+					//echo "Setting " .$inNode ." 's child to be ". $newChild ."\n"; //Debugging
 				}
 			}
 			for($i = 0; $i<count($children); $i++){
 				$this->prune($children[$i]);
 			}
+		}
+
+		public function traverse($inNode,&$codeStream){
+			$children = $this->nodes[$inNode]->get_children();
+			for ($i = 0; $i<count($children); $i++){
+				$this->traverse($children[$i],$codeStream);
+			}
+			$this->nodes[$inNode]->output_code($codeStream);
+			$this->code=$codeStream;
 		}
 	}
 
