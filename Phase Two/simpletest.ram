@@ -7,5 +7,5 @@ fun addtwo(in x) as in
 endfun
 
 fun addthree(in y) as in
-	toss y+3
+	toss y+true
 endfun

@@ -44,7 +44,7 @@
 <toss>
 <ident>
 <add_op>
-<literal>
+<true>
 <endl>
 <endfun>
 <endl>

@@ -57,7 +57,9 @@
 		private $tokenIndex;	//for use with the recursive traverse function
 		private $declaration;	//for recursive call to build symtable`, need to track assign or declaration
 		private $type;			//for knowing what type a ident is
-		private $code;
+		private $tracking;		//for semantic analysis special cases (while, not, toss, etc)
+
+		private $code; 			//for code generation 
 		
 		public function getCode(){
 			return $this->code;
@@ -166,26 +168,49 @@
 				$typeArr[$i]=$this->semanticAnalysis($children[$i]);
 			}
 			$myType=NULL;
-			switch($this->nodes[$inNode]->token){
+			$currentType=NULL;
+			foreach($typeArr as $rtype){	//make sure children are all same type and ignore null
+				if($rtype!=NULL){
+					if($currentType==NULL){
+						$currentType=$rtype;
+					}
+					else{
+						if($currentType!=$rtype){
+							exit("semantics FAILED: expected a ".$currentType."\n");
+						}
+					}				
+				}
+			}
+			$myType=$currentType;
+			switch($this->nodes[$inNode]->token){	//define special retrn rules for cases where parent needs to see other than children
 				case "<ident>":
 					$myType=$this->nodes[$inNode]->type;
+					echo("i saw an ident of type ".$myType."\n");
 					break;
 				case "<literal>":
-					$myType="<in>";
+					$myType="<in_type>";
+					break;
+				case "<true>":
+					$myType="<boo_type>";
+					break;
+				case "<false>":
+					$myType="<boo_type>";
+					break;
+				case "<param>":
+					$myType=NULL;
 					break;
 				case "<varhandler>":
-					if($typeArr[0]!=$typeArr[1])
-						exit("semantic error 1");
-					else
-						$myType=$typeArr[0];
+					$myType=NULL;
 					break;
-				case "<declaration>":
-					$myType=$typeArr[1];
+				case "<stmts>":
+					$myType=NULL;
 					break;
-				case "<assign>":
-					$myType=$typeArr[1];
+				case "<conditional>":
+					$myType=NULL;
 					break;
-				case "<relationalopexpression>"
+				case "<elfears>":
+					$myType=NULL;
+					break;
 			}
 			return $myType;
 		}
