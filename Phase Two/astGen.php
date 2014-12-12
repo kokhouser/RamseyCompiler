@@ -159,6 +159,37 @@
 
 		}
 
+		public function semanticAnalysis($inNode){
+			$children = $this->nodes[$inNode]->get_children();
+			$typeArr=array();
+			for ($i = 0; $i<count($children); $i++){
+				$typeArr[$i]=$this->semanticAnalysis($children[$i]);
+			}
+			$myType=NULL;
+			switch($this->nodes[$inNode]->token){
+				case "<ident>":
+					$myType=$this->nodes[$inNode]->type;
+					break;
+				case "<literal>":
+					$myType="<in>";
+					break;
+				case "<varhandler>":
+					if($typeArr[0]!=$typeArr[1])
+						exit("semantic error 1");
+					else
+						$myType=$typeArr[0];
+					break;
+				case "<declaration>":
+					$myType=$typeArr[1];
+					break;
+				case "<assign>":
+					$myType=$typeArr[1];
+					break;
+				case "<relationalopexpression>"
+			}
+			return $myType;
+		}
+
 		public function traverse($inNode,&$codeStream){
 			$children = $this->nodes[$inNode]->get_children();
 			for ($i = 0; $i<count($children); $i++){
