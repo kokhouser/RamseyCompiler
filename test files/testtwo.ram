@@ -1,0 +1,28 @@
+fun foo(in bar) as boo 		#nice use of overused unofficial standards
+	
+							#do some maths for fun!
+bar <- bar+242				
+bar <- bar*2
+bar <- bar-40
+bar <- bar/2 				#bar will be the same evenness as before 
+
+
+
+	if(bar mod 2 = 0)	#check to see if number is even
+		toss 1				#number is even
+	endif
+	
+	toss 0					#number is odd (even though 0 is not odd)
+
+endfun
+
+#Remove the following comment symbols to see the parser gripe at you!
+#in count <-0
+#in input				
+#boo isEven
+#while(count < 200)
+#	input<-count
+#	count <- count + 1
+#endwhile
+
+#isEven <- foo(input)

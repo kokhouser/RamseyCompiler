@@ -1,0 +1,12 @@
+fun poweroftwo(in y) as in
+	in x <- 1
+	in i <- 0
+	while(i<y)
+		i <- i+1
+		x <- x*2
+	endwhile
+endfun
+
+fun validate(in x, boo t)
+	in temp <- t
+endfun

@@ -1,0 +1,16 @@
+ fun factorial(in x) as in
+
+	if (x = 1)
+		toss x
+	else
+		toss (x * factorial (x-1))
+	endif
+
+endfun
+
+#Remove following comment symbols to see the parser gripe at you!
+#in x
+#give "Enter number to be factorialized."
+#take x
+#in y <- factorial(x)
+#give x " factorialized is " y
