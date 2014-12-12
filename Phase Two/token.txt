@@ -11,6 +11,8 @@
 <ident>
 <add_op>
 <literal>
+<add_op>
+<true>
 <endl>
 <endfun>
 <endl>
