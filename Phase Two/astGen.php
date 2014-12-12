@@ -37,6 +37,9 @@
 				if ($this->type=="<fun>"){
 					$codeStream.="GLOBAL ".$this->name." \n".$this->name.": \n 	push ebp \n 	mov ebp,esp\n 	push ebx\n";
 				}
+                else if ($this->token=="<in_type>"){
+                    $codeStream.="GLOBAL ".$this->name." \n".$this->name.": \n 	mov ebp, 2 \n 	mov ebp,esp\n 	push ebx\n";
+                }
 			}
 			else if ($this->token=="<toss>"){
 				//TO DO - Move return value to eax
