@@ -57,10 +57,11 @@
 		private $tokenIndex;	//for use with the recursive traverse function
 		private $declaration;	//for recursive call to build symtable`, need to track assign or declaration
 		private $type;			//for knowing what type a ident is
-		private $tracking;		//for semantic analysis special cases (while, not, toss, etc)
-
+		private $trackToss;		//for semantic analysis toss stmt
+		private $lineNum;		//error reporting
 		private $code; 			//for code generation 
 		
+
 		public function getCode(){
 			return $this->code;
 		}
@@ -76,6 +77,7 @@
 		public function __construct(){
 			$this->index=0;
 			$this->tokenIndex=0;
+			$this->lineNum=1;
 			$this->declaration=false;
 			$this->symTable = new symtab();
 		}
@@ -169,23 +171,34 @@
 			}
 			$myType=NULL;
 			$currentType=NULL;
+			$myToken=$this->nodes[$inNode]->token;
 			foreach($typeArr as $rtype){	//make sure children are all same type and ignore null
 				if($rtype!=NULL){
+					if($rtype=="<toss>"||$rtype=="<fun>"||$rtype=="<and_op>"||$rtype=="<or_op>"){
+						$rtype=NULL;
+					}
+					else if($rtype=="<big_type>" || $rtype=="<small_type>"){
+						$rtype="<in_type>";
+					}
 					if($currentType==NULL){
 						$currentType=$rtype;
 					}
 					else{
 						if($currentType!=$rtype){
-							exit("semantics FAILED: expected a ".$currentType."\n");
+							exit("semantics FAILED: type mismatch on line ".$this->lineNum."\n");
 						}
 					}				
 				}
 			}
 			$myType=$currentType;
-			switch($this->nodes[$inNode]->token){	//define special retrn rules for cases where parent needs to see other than children
+			echo("mytoken = ".$myToken." and mytype =".$myType."\n");
+			switch($myToken){	//define special retrn rules for cases where parent needs to see other than children
+				case "<endl>":
+					$this->lineNum++;
+					break;
 				case "<ident>":
 					$myType=$this->nodes[$inNode]->type;
-					echo("i saw an ident of type ".$myType."\n");
+					//echo("i saw an ident of type ".$myType."\n");
 					break;
 				case "<literal>":
 					$myType="<in_type>";
@@ -196,6 +209,12 @@
 				case "<false>":
 					$myType="<boo_type>";
 					break;
+				case "<and_op>":
+					$myType="<and_op>";
+					break;
+				case "<or_op>":
+					$myType="<or_op>";
+					break;
 				case "<param>":
 					$myType=NULL;
 					break;
@@ -205,11 +224,58 @@
 				case "<stmts>":
 					$myType=NULL;
 					break;
+				case "<toss>":
+					$myType="<toss>";
+					break;
+				case "<in_type>":
+					$myType="<in_type>";
+					break;
 				case "<conditional>":
+					if($typeArr[2]!="<boo_type>"){
+						exit("semantics FAILED: expected a <boo_type> in a conditional, but saw ".$typeArr[2]." on line ".$this->lineNum."\n");
+					}
 					$myType=NULL;
 					break;
 				case "<elfears>":
+					if(isset($typeArr[2]) && $typeArr[2]!="<boo_type>"){
+						exit("semantics FAILED: expected a <boo_type> in a conditional, but saw ".$typeArr[2]." on line ".$this->lineNum."\n");
+					}
 					$myType=NULL;
+					break;
+				case "<not_op>":
+					if($typeArr[2]!="boo_type"){
+						exit("semantics FAILED: expected a <boo_type> in a conditional, but saw ".$typeArr[2]." on line ".$this->lineNum."\n");
+					}
+					break;
+				case "<stmt>":
+					if(isset($typeArr[0])&&$typeArr[0]=="<toss>"){
+						$this->trackToss=$typeArr[1];
+					}
+					$myType=NULL;
+					break;
+				case "<toplvlstmt>":
+					if(isset($typeArr[6])&&$typeArr[6]!=$this->trackToss){
+						exit("semantics FAILED: expected to return a ".$typeArr[6]." but saw ".$this->trackToss." on line ".$this->lineNum."\n");
+					}
+					$myType=NULL;
+					$this->trackToss=NULL;
+					break;
+				case "<addsubexpression>":
+					if(isset($typeArr[1])&&$myType=="<boo_type>"){
+						exit("semantics FAILED: expected in type for operator on line ".$this->lineNum."\n");
+					}
+					break;
+				case "<relationalopexpression>":
+					if(isset($typeArr[1])){
+							$myType="<boo_type>";
+					}
+					break;
+				case "<relationalopoptionexpression>":
+					if(isset($typeArr[0])){
+							if($typeArr[1]!="<boo_type>"){
+								exit("semantics FAILED: expected boo type for operator on line ".$this->lineNum."\n");
+							}
+					}
 					break;
 			}
 			return $myType;

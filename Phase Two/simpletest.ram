@@ -6,6 +6,12 @@ fun addtwo(in x) as in
 	toss x+2
 endfun
 
-fun addthree(in y) as in
-	toss y+true
+fun addthree(small y, boo s) as in
+	in first <-7
+	if (s and true)
+		in y <-5
+	elf (true)
+		y <- y+2
+	endif
+	toss y
 endfun

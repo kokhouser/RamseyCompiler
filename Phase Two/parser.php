@@ -17,9 +17,9 @@
 	$astGenerator -> prune(0);
 	$codeStream="	SECTION .text \n";
 	$astGenerator->buildSymTab(0);
-	$astGenerator->symTable->printSelf();
+	//$astGenerator->symTable->printSelf();
 	$astGenerator->semanticAnalysis(0);
-
+	echo("Congrats! You're Ready for code Generation!\n");
 	$astGenerator -> traverse(0,$codeStream);
 	$finalCode = $astGenerator->getCode();
 	file_put_contents("code.asm", $finalCode);
