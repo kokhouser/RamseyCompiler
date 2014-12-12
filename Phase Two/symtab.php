@@ -70,7 +70,7 @@ class Symtab{
 			$this->symbolTable[$location]["data"]=$inData;
 		}
 		//else, we set nothing because it is a reference
-
+		return $location;
 		
 	}
 
