@@ -1,4 +1,4 @@
-fun poweroftwo(in y)
+fun poweroftwo(in y) as in
 	in x <- 1
 	in i <- 0
 	while(i<y)

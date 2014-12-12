@@ -29,7 +29,7 @@
 		}
 
         private function addNodesToAst($token, $parentIndex, $currentIndex){ //function to add nodes into the ast. Pass in the token name and parent index and it'll do the rest.
-            $newNode = new Node ($token); //Create new node
+            $newNode = new node ($token); //Create new node
             $this->astGenerator->addNode($newNode); //Adds node to tree
             $nodes = $this->astGenerator->get_nodes(); 
             $nodes[$parentIndex]->addChild($currentIndex); //Link parent and new node

@@ -1,13 +1,13 @@
 <?php 
-
+	require("symtab.php");
 	class node{ 
 		
 		//properties
-		private $token;
-		private $value; // if there is a value with token, i.e. the string of the ident
+		public $token;
+		public $value; // if there is a value with token, i.e. the string of the ident
 		private $children = array(); //array of indeces for children 
 		private $index; //current index of array so that only the end is added onto
-		
+
 		//methods
 		public function __construct($input){
 			$this->token=$input;
@@ -36,7 +36,7 @@
 			else{
 				//$codeStream.=$this->token.="\n";
 			}
-			//echo $codeStream;
+			//echo $this->token."\n";
 		}
 	}
 
@@ -44,8 +44,12 @@
 		private $nodes; //array of nodes, root is always at 0
 		private $index; //current end for adding to
 		private $tokenArray;
+		public $symTable;
+		private $tokenIndex;	//for use with the recursive traverse function
+		private $declaration;	//for recursive call to build symtable`, need to track assign or declaration
+		private $type;			//for knowing what type a ident is
 		private $code;
-
+		
 		public function getCode(){
 			return $this->code;
 		}
@@ -60,6 +64,9 @@
 		
 		public function __construct(){
 			$this->index=0;
+			$this->tokenIndex=0;
+			$this->declaration=false;
+			$this->symTable = new symtab();
 		}
 
 		public function addNode($inNode){ 
@@ -100,6 +107,45 @@
 			for($i = 0; $i<count($children); $i++){
 				$this->prune($children[$i]);
 			}
+		}
+
+		public function buildSymTab($inNode){
+			$children = $this->nodes[$inNode]->get_children();
+			$myToken = $this->nodes[$inNode]->token;
+			if($myToken=="<ident>"){
+				$this->nodes[$inNode]->value=$this->tokenArray[$this->tokenIndex]->name;
+				$this->symTable->set_symbol($this->nodes[$inNode]->value, $this->type, $this->declaration);	
+				$this->declaration=false;
+				if($this->type=="<fun>"){
+					$this->symTable->openScope(); //special case, we had to wait until after the func ident was made to open scope
+				}
+				$this->tokenIndex++;	
+			}
+			else if($myToken=="<literal>"){
+				$this->nodes[$inNode]->value=$this->tokenArray[$this->tokenIndex]->value;
+				$this->declaration=false;		
+				$this->tokenIndex++;	
+			}else if($myToken=="<fun>" || $myToken=="<in_type>" ||$myToken=="<small_type>" ||$myToken=="<big_type>" || $myToken=="<boo_type>"){
+				$this->declaration = true;
+				$this->type = $myToken;
+			}
+			else{
+				$this->declaration=false;
+			}
+			if($myToken=="<while>" || $myToken=="<if>"){
+				$this->symTable->openScope();
+			}
+			else if($myToken=="<elf>" ||$myToken=="<else>"){
+				$this->symTable->closeScope();
+				$this->symTable->openScope();
+			}
+			else if($myToken=="<endfun>" || $myToken=="<endwhile>" || $myToken=="<endif>"){
+				$this->symTable->closeScope();
+			}
+			for ($i = 0; $i<count($children); $i++){
+				$this->buildSymTab($children[$i]);
+			}
+
 		}
 
 		public function traverse($inNode,&$codeStream){

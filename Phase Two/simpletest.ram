@@ -5,3 +5,7 @@ endfun
 fun addtwo(in x) as in
 	toss x+2
 endfun
+
+fun addthree(in y) as in
+	toss y+3
+endfun
