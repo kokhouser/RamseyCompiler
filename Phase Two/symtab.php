@@ -74,26 +74,13 @@ class Symtab{
 		
 	}
 
-	//i think check scope does what this does already.
-	public function get_symbol($inName){ // a symbol has been referenced. this looks for valid declaration and returns false if no valid declaration exists
+	public function search_symbol($inIndex){ // for use to get data from a symbol
 		$trackData="";
 		$trackScope=0;
-		foreach($this->symbolTable as $row){
-			if($row["name"]==$inName){ //found a declaration
-				if($row['depth']>=$trackScope){ //this row's scope is more local than current data, less or equal in case at zero depth
-					$trackData = $row["data"];
-					$trackScope = $row["depth"];
-				}
-				// else would check a scope not as local as tracked, and if track is greater, we are storing 'lowest' data
-			}
-		}
-		//need to be sure there was at least one match
-		if($trackData==""){
-			exit("Variable '".$inName."' was referenced without having an active declaration\n");
-		}
-		else{
-			return $trackData;	//we wanted type/info, so that's what is returned
-		}
+		$resultArr=array();
+		$resultArr["name"]=$this->symbolTable[$inIndex]["name"];
+		$resultArr["type"]=$this->symbolTable[$inIndex]["data"];
+		return $resultArr;	
 	}
 
 	public function printSelf(){

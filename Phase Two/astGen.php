@@ -5,6 +5,7 @@
 		//properties
 		public $token;
 		public $value; // if there is a value with token, i.e. the string of the ident
+		public $symtabIndex;
 		private $children = array(); //array of indeces for children 
 		private $index; //current index of array so that only the end is added onto
 
@@ -118,8 +119,8 @@
 			$children = $this->nodes[$inNode]->get_children();
 			$myToken = $this->nodes[$inNode]->token;
 			if($myToken=="<ident>"){
-				$this->nodes[$inNode]->value=$this->tokenArray[$this->tokenIndex]->name;
-				$this->symTable->set_symbol($this->nodes[$inNode]->value, $this->type, $this->declaration);	
+				$targetIndex=$this->symTable->set_symbol($this->tokenArray[$this->tokenIndex]->name, $this->type, $this->declaration);	
+				$this->nodes[$inNode]->symtabIndex=$targetIndex;
 				$this->declaration=false;
 				if($this->type=="<fun>"){
 					$this->symTable->openScope(); //special case, we had to wait until after the func ident was made to open scope
