@@ -5,7 +5,8 @@
 		//properties
 		public $token;
 		public $value; // if there is a value with token, i.e. the string of the ident
-		public $symtabIndex;
+		public $name;
+		public $type;
 		private $children = array(); //array of indeces for children 
 		private $index; //current index of array so that only the end is added onto
 
@@ -32,7 +33,7 @@
 				$codeStream.="GLOBAL placeholder(replace with function name) \nplaceholder: \n 	push ebp \n 	mov ebp,esp\n 	push ebx\n";
 			}*/
 			if ($this->token=="<ident>"){
-				if ($this->value=="")
+				if ($this->value=="");
 			}
 			else if ($this->token=="<toss>"){
 				//TO DO - Move return value to eax
@@ -119,7 +120,9 @@
 			$myToken = $this->nodes[$inNode]->token;
 			if($myToken=="<ident>"){
 				$targetIndex=$this->symTable->set_symbol($this->tokenArray[$this->tokenIndex]->name, $this->type, $this->declaration);	
-				$this->nodes[$inNode]->symtabIndex=$targetIndex;
+				$tempArr=$this->symTable->search_symbol($targetIndex);
+				$this->nodes[$inNode]->name=$tempArr["name"];
+				$this->nodes[$inNode]->type=$tempArr["type"];
 				$this->declaration=false;
 				if($this->type=="<fun>"){
 					$this->symTable->openScope(); //special case, we had to wait until after the func ident was made to open scope
