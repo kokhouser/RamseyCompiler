@@ -22,7 +22,7 @@
 	$astGenerator -> traverse(0,$codeStream);
 	$finalCode = $astGenerator->getCode();
 	file_put_contents("code.asm", $finalCode);
-	//print_r ($astGenerator->get_nodes());
+	print_r ($astGenerator->get_nodes());
 	//print_r($tokenArray);
 	//print_r ($astGenerator -> get_tokenArray());//debugging statement
 	//Note that there are n+1 array slots because of the extra endline.
