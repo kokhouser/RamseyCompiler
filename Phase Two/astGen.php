@@ -26,8 +26,12 @@
 
 		public function output_code(&$codeStream){
 			//$codeStream.=$this->token.="\n";
+			/*
 			if ($this->token=="<fun>"){
 				$codeStream.="GLOBAL placeholder(replace with function name) \nplaceholder: \n 	push ebp \n 	mov ebp,esp\n 	push ebx\n";
+			}*/
+			if ($this->token=="<ident>"){
+				if ($this->value=="")
 			}
 			else if ($this->token=="<toss>"){
 				//TO DO - Move return value to eax
