@@ -177,14 +177,21 @@
 					if($rtype=="<toss>"||$rtype=="<fun>"||$rtype=="<and_op>"||$rtype=="<or_op>"){
 						$rtype=NULL;
 					}
-					else if($rtype=="<big_type>" || $rtype=="<small_type>"){
-						$rtype="<in_type>";
-					}
 					if($currentType==NULL){
 						$currentType=$rtype;
 					}
 					else{
-						if($currentType!=$rtype){
+						if($currentType=="<num_type>"){
+							if($rtype !="<big_type>"&&$rtype!="<small_type>"&&$rtype!="<in_type>"){
+								exit("semantics FAILED: type mismatch on line ".$this->lineNum."\n");
+							}
+						}
+						else if($rtype=="<num_type>"){
+							if($currentType !="<big_type>"&&$currentType!="<small_type>"&&$currentType!="<in_type>"){
+								exit("semantics FAILED: type mismatch on line ".$this->lineNum."\n");
+							}
+						}
+						else if($currentType!=$rtype){
 							exit("semantics FAILED: type mismatch on line ".$this->lineNum."\n");
 						}
 					}				
@@ -201,7 +208,13 @@
 					//echo("i saw an ident of type ".$myType."\n");
 					break;
 				case "<literal>":
-					$myType="<in_type>";
+					$myType="<num_type>";
+					break;
+				case "<big_type>":
+					$myType="<big_type>";
+					break;
+				case "<small_type>":
+					$myType="<small_type>";
 					break;
 				case "<true>":
 					$myType="<boo_type>";
