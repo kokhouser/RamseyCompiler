@@ -15,6 +15,7 @@ class Symtab{
 	public function __construct(){
 		$this->currentScope=0;
 		$this->symbolTable = array();
+		$this->currentIndex=0;
 	}
 	public function openScope(){
 		$this->currentScope++;
@@ -66,11 +67,14 @@ class Symtab{
 			$this->symbolTable[$location]["name"]=$inName; 		
 			$this->symbolTable[$location]["depth"]=$this->currentScope;
 			$this->symbolTable[$location]["live"]=true;
+			$this->symbolTable[$location]["data"]=$inData;
 		}
-		//else, location is the index where we want to change the data
-		$this->symbolTable[$location]["data"]=$inData;
+		//else, we set nothing because it is a reference
+
 		
 	}
+
+	//i think check scope does what this does already.
 	public function get_symbol($inName){ // a symbol has been referenced. this looks for valid declaration and returns false if no valid declaration exists
 		$trackData="";
 		$trackScope=0;
@@ -95,6 +99,7 @@ class Symtab{
 	public function printSelf(){
 		foreach($this->symbolTable as $key => $row){
 			echo("variable ".$key." is named '".$row["name"]."', at depth ".$row["depth"].", and holds the type ".$row["data"].".\n");
+		}
 	}
 }
 

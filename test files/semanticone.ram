@@ -1,4 +1,4 @@
-fun foo(in x, in y){
+fun foo(in x, in y)as in{
 	if(x=true)
 		toss 7
 }
